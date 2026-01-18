@@ -3,7 +3,7 @@
 Interactive, mobile-friendly cruise itinerary.
 
 ## 📱 Live version
-👉 https://<your-username>.github.io/cruise-plan/
+👉 https://coreybeach.github.io/
 
 ## 🔧 How to use
 - Tap a day to see today’s plan
