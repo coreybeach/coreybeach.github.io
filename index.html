@@ -1,0 +1,665 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cruise Master Plan</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#101a2e;
+      --card2:#0f172a;
+      --text:#e5e7eb;
+      --muted:#a6b0c3;
+      --accent:#60a5fa;
+      --accent2:#34d399;
+      --warn:#fbbf24;
+      --danger:#f87171;
+      --border:rgba(255,255,255,.08);
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(900px 600px at 20% -10%, rgba(96,165,250,.22), transparent 55%),
+                  radial-gradient(900px 600px at 80% 0%, rgba(52,211,153,.18), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.35;
+    }
+
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:16px 14px 70px;}
+
+    /* Top bar */
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px);
+      background: rgba(11,18,32,.72);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner{
+      max-width:1100px; margin:0 auto; padding:12px 14px;
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+    }
+    .brand{
+      display:flex; flex-direction:column; gap:2px;
+    }
+    .brand .title{font-weight:800; letter-spacing:.2px}
+    .brand .sub{color:var(--muted); font-size:12px}
+    .nav{
+      display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;
+    }
+    .pill{
+      padding:8px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(16,26,46,.65);
+      font-size:13px;
+      transition:.15s transform ease, .15s background ease;
+      white-space:nowrap;
+    }
+    .pill:active{transform: scale(.98)}
+    .pill:hover{background: rgba(16,26,46,.9)}
+    .pill.accent{border-color: rgba(96,165,250,.35)}
+
+    /* Sections */
+    section{margin-top:18px}
+    .section-head{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:10px; margin:8px 0 10px;
+    }
+    h2{
+      margin:0;
+      font-size:18px;
+      letter-spacing:.2px;
+    }
+    .note{
+      color:var(--muted); font-size:12px;
+    }
+
+    /* Cards */
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media (min-width: 860px){
+      .grid.two{grid-template-columns: 1fr 1fr}
+      .grid.three{grid-template-columns: 1fr 1fr 1fr}
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(16,26,46,.92), rgba(15,23,42,.92));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:14px 14px 12px;
+    }
+    .card h3{
+      margin:0 0 8px;
+      font-size:15px;
+    }
+    .kv{
+      display:flex; gap:10px; flex-wrap:wrap;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .chip{
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+    }
+    .list{
+      margin:10px 0 0; padding:0; list-style:none;
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .li{
+      padding:10px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.03);
+      border:1px solid var(--border);
+    }
+    .li .when{font-family:var(--mono); color:#cdd6e7; font-size:12px}
+    .li .what{margin-top:2px}
+    .tag{
+      display:inline-block;
+      font-size:11px;
+      padding:3px 8px;
+      border-radius:999px;
+      margin-left:8px;
+      border:1px solid var(--border);
+      color:var(--muted);
+      vertical-align:middle;
+    }
+    .tag.priority{color:#0b1220; background: var(--warn); border-color: rgba(251,191,36,.35)}
+    .tag.locked{color:#0b1220; background: var(--accent2); border-color: rgba(52,211,153,.35)}
+    .tag.flex{color:#0b1220; background: var(--warn); border-color: rgba(251,191,36,.35)}
+    .tag.risk{color:#0b1220; background: var(--danger); border-color: rgba(248,113,113,.35)}
+
+    /* Day picker */
+    .daybar{
+      display:flex; gap:8px; overflow:auto; padding-bottom:6px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .daybar::-webkit-scrollbar{display:none}
+    .daybtn{
+      flex:0 0 auto;
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      background: rgba(16,26,46,.75);
+      font-weight:600;
+      font-size:13px;
+      cursor:pointer;
+      user-select:none;
+      transition:.15s transform ease, .15s background ease;
+    }
+    .daybtn:hover{background: rgba(16,26,46,.95)}
+    .daybtn:active{transform: scale(.98)}
+    .daybtn.active{
+      border-color: rgba(96,165,250,.5);
+      box-shadow: 0 0 0 2px rgba(96,165,250,.18) inset;
+    }
+
+    /* Timeline */
+    .timeline{margin-top:10px}
+    .daypanel{display:none}
+    .daypanel.active{display:block}
+
+    /* Visual grid table */
+    .table-wrap{
+      overflow:auto;
+      border-radius: var(--radius);
+      border:1px solid var(--border);
+      background: rgba(16,26,46,.55);
+    }
+    table{
+      width:100%;
+      border-collapse: collapse;
+      min-width: 980px; /* keeps columns readable; scroll on phone */
+    }
+    th, td{
+      border-bottom:1px solid var(--border);
+      border-right:1px solid var(--border);
+      padding:10px 10px;
+      vertical-align: top;
+      font-size:13px;
+    }
+    th{
+      position:sticky; top:0;
+      background: rgba(11,18,32,.95);
+      z-index:1;
+      text-align:left;
+      font-size:12px;
+      letter-spacing:.2px;
+      color: var(--muted);
+    }
+    td:first-child, th:first-child{
+      position:sticky; left:0;
+      background: rgba(11,18,32,.95);
+      z-index:2;
+      font-family: var(--mono);
+      font-size:12px;
+      color:#cdd6e7;
+      width:120px;
+    }
+    tr:last-child td{border-bottom:none}
+    td:last-child, th:last-child{border-right:none}
+    .cell-muted{color: var(--muted)}
+    .small{font-size:12px; color: var(--muted)}
+    .footer{
+      margin-top:18px;
+      color: var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="title">🛳️ Cruise Master Plan</div>
+        <div class="sub">All times = ship time • Offline-friendly</div>
+      </div>
+      <nav class="nav">
+        <a class="pill accent" href="#today">Today</a>
+        <a class="pill" href="#glance">At-a-glance</a>
+        <a class="pill" href="#grid">Visual grid</a>
+        <a class="pill" href="#days">Days</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <!-- TODAY -->
+    <section id="today">
+      <div class="section-head">
+        <h2>📌 Today (tap a day below)</h2>
+        <div class="note">Tip: add this page to your Home Screen for 1-tap access.</div>
+      </div>
+
+      <div class="card">
+        <div class="daybar" role="tablist" aria-label="Select day">
+          <button class="daybtn active" data-day="d1">Day 1</button>
+          <button class="daybtn" data-day="d2">Day 2</button>
+          <button class="daybtn" data-day="d3">Day 3</button>
+          <button class="daybtn" data-day="d4">Day 4</button>
+          <button class="daybtn" data-day="d5">Day 5</button>
+          <button class="daybtn" data-day="d6">Day 6</button>
+          <button class="daybtn" data-day="d7">Day 7</button>
+        </div>
+
+        <div class="timeline">
+          <!-- Day panels -->
+          <div class="daypanel active" id="d1">
+            <div class="kv">
+              <span class="chip">📍 Miami → Sail Away</span>
+              <span class="chip">🍽️ 🟨 Flexible (6:30–?)</span>
+              <span class="chip">🧯 Safety briefing required</span>
+            </div>
+            <ul class="list">
+              <li class="li"><div class="when">4:30–5:00</div><div class="what">🎉 Sail Away Party <span class="tag">Pool Deck D16</span></div></li>
+              <li class="li"><div class="when">6:30–?</div><div class="what">🟨🍽️ My Time Dining <span class="tag flex">Flexible</span></div></li>
+              <li class="li"><div class="when">9:30–10:20</div><div class="what">🎭 Headliner <span class="tag">Royal Theater D4</span></div></li>
+              <li class="li"><div class="when">11:50–12:00</div><div class="what">🎶 Sing-Along <span class="tag">Promenade D5</span></div></li>
+              <li class="li"><div class="when">12:00–Late</div><div class="what">🎉 Balloon Drop + DJ <span class="tag">Promenade D5 / Music Hall D3</span></div></li>
+            </ul>
+          </div>
+
+          <div class="daypanel" id="d2">
+            <div class="kv">
+              <span class="chip">🌊 Sea Day</span>
+              <span class="chip">🍽️🔒 6:45–?</span>
+            </div>
+            <ul class="list">
+              <li class="li"><div class="when">6:45–?</div><div class="what">🍽️🔒 My Time Dining <span class="tag locked">Booked</span></div></li>
+              <li class="li"><div class="when">11:30–12:25</div><div class="what">🎤 Adult Comedy (18+) <span class="tag">The Attic D6</span></div></li>
+            </ul>
+          </div>
+
+          <div class="daypanel" id="d3">
+            <div class="kv">
+              <span class="chip">🏝️ Puerto Costa Maya (8:00–5:00)</span>
+              <span class="chip">🟨🍽️ Dining shifted (7:00–?)</span>
+              <span class="chip"><span class="tag risk">Late-night risk</span> next day early excursion</span>
+            </div>
+            <ul class="list">
+              <li class="li"><div class="when">8:00–5:00</div><div class="what">🏝️ Port day (explore)</div></li>
+              <li class="li"><div class="when">4:30–6:10</div><div class="what">🎭 Wizard of Oz <span class="tag">Royal Theater D4</span></div></li>
+              <li class="li"><div class="when">7:00–?</div><div class="what">🟨🍽️ My Time Dining <span class="tag flex">Flexible</span></div></li>
+              <li class="li"><div class="when">11:30–12:25</div><div class="what">🎤 Adult Comedy (18+) <span class="tag">The Attic D6</span></div></li>
+            </ul>
+          </div>
+
+          <div class="daypanel" id="d4">
+            <div class="kv">
+              <span class="chip">🏝️ Roatán (7:00–4:00)</span>
+              <span class="chip">🧗‍♂️ Zipline 9:00 (meet ~8:30)</span>
+              <span class="chip">🍽️🔒 6:45–?</span>
+            </div>
+            <ul class="list">
+              <li class="li"><div class="when">8:30</div><div class="what">⏱️ Be at pickup/meet location</div></li>
+              <li class="li"><div class="when">9:00</div><div class="what">🧗‍♂️ Zipline Excursion (port)</div></li>
+              <li class="li"><div class="when">6:45–?</div><div class="what">🍽️🔒 My Time Dining <span class="tag locked">Booked</span></div></li>
+              <li class="li"><div class="when">9:00–10:00</div><div class="what">🎮 Love & Marriage <span class="tag priority">PRIORITY</span> <span class="tag">Royal Theater D4</span></div></li>
+            </ul>
+          </div>
+
+          <div class="daypanel" id="d5">
+            <div class="kv">
+              <span class="chip">🏝️ Cozumel (8:00–6:00)</span>
+              <span class="chip">🛞 ATV 10:00 (ready ~9:30)</span>
+              <span class="chip">🍽️🔒 8:30–?</span>
+            </div>
+            <ul class="list">
+              <li class="li"><div class="when">9:30</div><div class="what">⏱️ Ready/meeting buffer</div></li>
+              <li class="li"><div class="when">10:00</div><div class="what">🛞 ATV + Jade Caverns Excursion</div></li>
+              <li class="li"><div class="when">7:00–8:00</div><div class="what">🎮 Price Is Right <span class="tag priority">PRIORITY</span> <span class="tag">Royal Theater D4</span></div></li>
+              <li class="li"><div class="when">8:30–?</div><div class="what">🍽️🔒 My Time Dining <span class="tag locked">Booked</span></div></li>
+              <li class="li"><div class="when">11:00–11:45</div><div class="what">🎮 Crazy Quest <span class="tag priority">PRIORITY</span> <span class="tag">Absolute Zero D6</span></div></li>
+            </ul>
+          </div>
+
+          <div class="daypanel" id="d6">
+            <div class="kv">
+              <span class="chip">🌊 Sea Day</span>
+              <span class="chip">🟨🍽️ Flexible (6:30–?)</span>
+            </div>
+            <ul class="list">
+              <li class="li"><div class="when">6:30–?</div><div class="what">🟨🍽️ My Time Dining <span class="tag flex">Flexible</span></div></li>
+              <li class="li"><div class="when">10:30–11:30</div><div class="what">💦 Aqua Action <span class="tag">AquaTheater D15</span></div></li>
+            </ul>
+          </div>
+
+          <div class="daypanel" id="d7">
+            <div class="kv">
+              <span class="chip">🏝️ CocoCay (7:00–5:00)</span>
+              <span class="chip">🍽️🔒 6:45–?</span>
+            </div>
+            <ul class="list">
+              <li class="li"><div class="when">7:00–5:00</div><div class="what">🏝️ Island day</div></li>
+              <li class="li"><div class="when">6:45–?</div><div class="what">🍽️🔒 My Time Dining <span class="tag locked">Booked</span></div></li>
+              <li class="li"><div class="when">10:30–11:25</div><div class="what">🎤 Adult Comedy (18+) <span class="tag">Royal Theater D4</span></div></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AT A GLANCE -->
+    <section id="glance">
+      <div class="section-head">
+        <h2>👀 At-a-Glance</h2>
+        <div class="note">Fast decisions without scrolling a full timeline.</div>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <h3>🎭 Entertainment</h3>
+          <ul class="list">
+            <li class="li"><div class="when">Day 1</div><div class="what">🎭 Headliner (9:30–10:20) • 🎶 Sing-Along (11:50–12:00) • 🎉 Balloon Drop/DJ (12:00–Late)</div></li>
+            <li class="li"><div class="when">Day 2</div><div class="what">🎤 Adult Comedy (11:30–12:25)</div></li>
+            <li class="li"><div class="when">Day 3</div><div class="what">🎭 Wizard of Oz (4:30–6:10) • 🎤 Adult Comedy (11:30–12:25)</div></li>
+            <li class="li"><div class="when">Day 4</div><div class="what">🎮 Love & Marriage (9:00–10:00) <span class="tag priority">PRIORITY</span></div></li>
+            <li class="li"><div class="when">Day 5</div><div class="what">🎮 Price Is Right (7:00–8:00) <span class="tag priority">PRIORITY</span> • 🎮 Crazy Quest (11:00–11:45) <span class="tag priority">PRIORITY</span></div></li>
+            <li class="li"><div class="when">Day 6</div><div class="what">💦 Aqua Action (10:30–11:30)</div></li>
+            <li class="li"><div class="when">Day 7</div><div class="what">🎤 Adult Comedy (10:30–11:25)</div></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>🏝️ Ports & Excursions</h3>
+          <ul class="list">
+            <li class="li"><div class="when">Day 3</div><div class="what">Puerto Costa Maya (8:00–5:00) — Explore</div></li>
+            <li class="li"><div class="when">Day 4</div><div class="what">Roatán (7:00–4:00) — 🧗‍♂️ Zipline 9:00 (meet ~8:30)</div></li>
+            <li class="li"><div class="when">Day 5</div><div class="what">Cozumel (8:00–6:00) — 🛞 ATV + Jade Caverns 10:00 (ready ~9:30)</div></li>
+            <li class="li"><div class="when">Day 7</div><div class="what">CocoCay (7:00–5:00) — Chill day</div></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid two" style="margin-top:12px">
+        <div class="card">
+          <h3>🍽️ Dining</h3>
+          <ul class="list">
+            <li class="li"><div class="when">Day 1</div><div class="what">🟨🍽️ Flexible (6:30–?)</div></li>
+            <li class="li"><div class="when">Day 2</div><div class="what">🍽️🔒 Booked (6:45–?)</div></li>
+            <li class="li"><div class="when">Day 3</div><div class="what">🟨🍽️ Shifted placeholder (7:00–?)</div></li>
+            <li class="li"><div class="when">Day 4</div><div class="what">🍽️🔒 Booked (6:45–?)</div></li>
+            <li class="li"><div class="when">Day 5</div><div class="what">🍽️🔒 Booked (8:30–?)</div></li>
+            <li class="li"><div class="when">Day 6</div><div class="what">🟨🍽️ Flexible (6:30–?)</div></li>
+            <li class="li"><div class="when">Day 7</div><div class="what">🍽️🔒 Booked (6:45–?)</div></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>⚠️ Risk & Energy</h3>
+          <ul class="list">
+            <li class="li"><div class="when">Early mornings</div><div class="what">Day 4 (Zipline) • Day 5 (ATV)</div></li>
+            <li class="li"><div class="when">Late-night risk</div><div class="what">Day 1 (past midnight) • Day 3 (comedy ends 12:25 → early excursion)</div></li>
+            <li class="li"><div class="when">High-energy days</div><div class="what">Day 4 • Day 5</div></li>
+            <li class="li"><div class="when">Recovery days</div><div class="what">Day 2 • Day 6 • Day 7 (choose chill)</div></li>
+            <li class="li"><div class="when">Best to book more</div><div class="what">Day 2 • Day 6 (Sea Days)</div></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISUAL GRID -->
+    <section id="grid">
+      <div class="section-head">
+        <h2>🗓️ Visual Grid</h2>
+        <div class="note">Scroll horizontally on phone • sticky headers + time column.</div>
+      </div>
+
+      <div class="table-wrap">
+        <table aria-label="Visual schedule grid">
+          <thead>
+            <tr>
+              <th>Time Block</th>
+              <th>Day 1</th>
+              <th>Day 2</th>
+              <th>Day 3</th>
+              <th>Day 4</th>
+              <th>Day 5</th>
+              <th>Day 6</th>
+              <th>Day 7</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>4:30–6:10</td>
+              <td>🎉 Sail Away (4:30–5:00)<div class="small">📍Pool Deck D16</div></td>
+              <td class="cell-muted">—</td>
+              <td>🎭 Wizard of Oz (4:30–6:10)<div class="small">📍Royal Theater D4</div></td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+            </tr>
+
+            <tr>
+              <td>6:30–9:30</td>
+              <td>🟨🍽️ Dining (6:30–?)</td>
+              <td>🍽️🔒 Dining (6:45–?)</td>
+              <td class="cell-muted">—</td>
+              <td>🍽️🔒 Dining (6:45–?)</td>
+              <td class="cell-muted">—</td>
+              <td>🟨🍽️ Dining (6:30–?)</td>
+              <td>🍽️🔒 Dining (6:45–?)</td>
+            </tr>
+
+            <tr>
+              <td>7:00–8:00</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td>🟨🍽️ Dining (7:00–?)</td>
+              <td class="cell-muted">—</td>
+              <td>🎮 Price Is Right (7:00–8:00) ✅<div class="small">📍Royal Theater D4</div></td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+            </tr>
+
+            <tr>
+              <td>8:30–?</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td>🍽️🔒 Dining (8:30–?)</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+            </tr>
+
+            <tr>
+              <td>9:00–10:00</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td>🎮 Love & Marriage (9:00–10:00) ✅<div class="small">📍Royal Theater D4</div></td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+            </tr>
+
+            <tr>
+              <td>9:30–10:20</td>
+              <td>🎭 Headliner (9:30–10:20)<div class="small">📍Royal Theater D4</div></td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+            </tr>
+
+            <tr>
+              <td>10:30–11:30</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td>💦 Aqua Action (10:30–11:30)<div class="small">📍AquaTheater D15</div></td>
+              <td>🎤 Adult Comedy (10:30–11:25)<div class="small">📍Royal Theater D4</div></td>
+            </tr>
+
+            <tr>
+              <td>11:00–11:45</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td>🎮 Crazy Quest (11:00–11:45) ✅<div class="small">📍Absolute Zero D6</div></td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+            </tr>
+
+            <tr>
+              <td>11:30–12:25</td>
+              <td class="cell-muted">—</td>
+              <td>🎤 Adult Comedy (11:30–12:25)<div class="small">📍The Attic D6</div></td>
+              <td>🎤 Adult Comedy (11:30–12:25)<div class="small">📍The Attic D6</div></td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+            </tr>
+
+            <tr>
+              <td>11:50–12:00</td>
+              <td>🎶 Sing-Along (11:50–12:00)<div class="small">📍Promenade D5</div></td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+            </tr>
+
+            <tr>
+              <td>12:00–Late</td>
+              <td>🎉 Balloon Drop + DJ (12:00–Late)<div class="small">📍Promenade D5 / Music Hall D3</div></td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+              <td class="cell-muted">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- DAYS -->
+    <section id="days">
+      <div class="section-head">
+        <h2>📅 Full Day-by-Day</h2>
+        <div class="note">Same data as the grid + logistics.</div>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <h3>Day 1 – Miami / Sail Away</h3>
+          <ul class="list">
+            <li class="li"><div class="when">Required</div><div class="what">🧯 Complete Guest Safety Briefing (see app window)</div></li>
+            <li class="li"><div class="when">4:30–5:00</div><div class="what">🎉 Sail Away Party <span class="tag">Pool Deck D16</span></div></li>
+            <li class="li"><div class="when">6:30–?</div><div class="what">🟨🍽️ Dining <span class="tag flex">Flexible</span></div></li>
+            <li class="li"><div class="when">9:30–10:20</div><div class="what">🎭 Headliner <span class="tag">Royal Theater D4</span></div></li>
+            <li class="li"><div class="when">11:50–12:00</div><div class="what">🎶 Sing-Along <span class="tag">Promenade D5</span></div></li>
+            <li class="li"><div class="when">12:00–Late</div><div class="what">🎉 Balloon Drop + DJ <span class="tag">Promenade D5 / Music Hall D3</span></div></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Day 2 – Sea Day</h3>
+          <ul class="list">
+            <li class="li"><div class="when">6:45–?</div><div class="what">🍽️🔒 Dining <span class="tag locked">Booked</span></div></li>
+            <li class="li"><div class="when">11:30–12:25</div><div class="what">🎤 Adult Comedy (18+) <span class="tag">The Attic D6</span></div></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Day 3 – Puerto Costa Maya (8:00–5:00)</h3>
+          <ul class="list">
+            <li class="li"><div class="when">8:00–5:00</div><div class="what">🏝️ Port day (explore)</div></li>
+            <li class="li"><div class="when">4:30–6:10</div><div class="what">🎭 Wizard of Oz <span class="tag">Royal Theater D4</span></div></li>
+            <li class="li"><div class="when">7:00–?</div><div class="what">🟨🍽️ Dining <span class="tag flex">Flexible</span></div></li>
+            <li class="li"><div class="when">11:30–12:25</div><div class="what">🎤 Adult Comedy (18+) <span class="tag risk">Late-night risk</span></div></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Day 4 – Roatán (7:00–4:00)</h3>
+          <ul class="list">
+            <li class="li"><div class="when">8:30</div><div class="what">⏱️ Meet buffer</div></li>
+            <li class="li"><div class="when">9:00</div><div class="what">🧗‍♂️ Zipline Excursion</div></li>
+            <li class="li"><div class="when">6:45–?</div><div class="what">🍽️🔒 Dining <span class="tag locked">Booked</span></div></li>
+            <li class="li"><div class="when">9:00–10:00</div><div class="what">🎮 Love & Marriage <span class="tag priority">PRIORITY</span></div></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Day 5 – Cozumel (8:00–6:00)</h3>
+          <ul class="list">
+            <li class="li"><div class="when">9:30</div><div class="what">⏱️ Ready buffer</div></li>
+            <li class="li"><div class="when">10:00</div><div class="what">🛞 ATV + Jade Caverns</div></li>
+            <li class="li"><div class="when">7:00–8:00</div><div class="what">🎮 Price Is Right <span class="tag priority">PRIORITY</span></div></li>
+            <li class="li"><div class="when">8:30–?</div><div class="what">🍽️🔒 Dining <span class="tag locked">Booked</span></div></li>
+            <li class="li"><div class="when">11:00–11:45</div><div class="what">🎮 Crazy Quest <span class="tag priority">PRIORITY</span></div></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Day 6 – Sea Day</h3>
+          <ul class="list">
+            <li class="li"><div class="when">6:30–?</div><div class="what">🟨🍽️ Dining <span class="tag flex">Flexible</span></div></li>
+            <li class="li"><div class="when">10:30–11:30</div><div class="what">💦 Aqua Action</div></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Day 7 – CocoCay (7:00–5:00)</h3>
+          <ul class="list">
+            <li class="li"><div class="when">7:00–5:00</div><div class="what">🏝️ Island day</div></li>
+            <li class="li"><div class="when">6:45–?</div><div class="what">🍽️🔒 Dining <span class="tag locked">Booked</span></div></li>
+            <li class="li"><div class="when">10:30–11:25</div><div class="what">🎤 Adult Comedy (18+)</div></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>🧳 Debarkation</h3>
+          <ul class="list">
+            <li class="li"><div class="when">Jan 31 • 6:00 AM</div><div class="what">Arrive Miami — plan bags/exit timing accordingly</div></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer">
+        Tip: On iPhone Safari → Share → “Add to Home Screen”. On Android Chrome → Menu → “Add to Home screen”.
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Tiny day switcher (no dependencies)
+    const buttons = Array.from(document.querySelectorAll('.daybtn'));
+    const panels  = Array.from(document.querySelectorAll('.daypanel'));
+
+    function setDay(id){
+      buttons.forEach(b => b.classList.toggle('active', b.dataset.day === id));
+      panels.forEach(p => p.classList.toggle('active', p.id === id));
+      // keep URL clean; but update hash for sharing if desired
+      history.replaceState(null, '', '#today');
+    }
+
+    buttons.forEach(b => b.addEventListener('click', () => setDay(b.dataset.day)));
+  </script>
+</body>
+</html>
