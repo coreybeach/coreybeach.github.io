@@ -280,135 +280,143 @@
        =========================== -->
   <script>
   const CRUISE_DATA = {
-    meta: {
-      subtitle: "All times = ship time • Offline-friendly",
-      days: [
-        { id:"d1", label:"Day 1", title:"Miami / Sail Away" },
-        { id:"d2", label:"Day 2", title:"Sea Day" },
-        { id:"d3", label:"Day 3", title:"Puerto Costa Maya (8:00–5:00)" },
-        { id:"d4", label:"Day 4", title:"Roatán (7:00–4:00)" },
-        { id:"d5", label:"Day 5", title:"Cozumel (8:00–6:00)" },
-        { id:"d6", label:"Day 6", title:"Sea Day" },
-        { id:"d7", label:"Day 7", title:"CocoCay (7:00–5:00)" }
-      ]
-    },
+  meta: {
+    subtitle: "All times = ship time • Offline-friendly",
+    days: [
+      { id:"d1", label:"Day 1", title:"Miami / Sail Away" },
+      { id:"d2", label:"Day 2", title:"Sea Day" },
+      { id:"d3", label:"Day 3", title:"Puerto Costa Maya (8:00–5:00)" },
+      { id:"d4", label:"Day 4", title:"Roatán (7:00–4:00)" },
+      { id:"d5", label:"Day 5", title:"Cozumel (8:00–6:00)" },
+      { id:"d6", label:"Day 6", title:"Sea Day" },
+      { id:"d7", label:"Day 7", title:"CocoCay (7:00–5:00)" }
+    ]
+  },
 
-    // At-a-glance blocks (editable text)
-    glance: {
-      dining: [
-        { day:"Day 1", text:"🟨🍽️ Flexible (6:30–?)", tags:["flex"] },
-        { day:"Day 2", text:"🍽️🔒 Booked (6:45–?)", tags:["locked"] },
-        { day:"Day 3", text:"🟨🍽️ Shifted placeholder (7:00–?)", tags:["flex"] },
-        { day:"Day 4", text:"🍽️🔒 Booked (6:45–?)", tags:["locked"] },
-        { day:"Day 5", text:"🍽️🔒 Booked (8:30–?)", tags:["locked"] },
-        { day:"Day 6", text:"🟨🍽️ Flexible (6:30–?)", tags:["flex"] },
-        { day:"Day 7", text:"🍽️🔒 Booked (6:45–?)", tags:["locked"] }
-      ],
-      ports: [
-        { day:"Day 3", text:"Puerto Costa Maya (8:00–5:00) — Explore" },
-        { day:"Day 4", text:"Roatán (7:00–4:00) — 🧗‍♂️ Zipline 9:00 (meet ~8:30)" },
-        { day:"Day 5", text:"Cozumel (8:00–6:00) — 🛞 ATV + Jade Caverns 10:00 (ready ~9:30)" },
-        { day:"Day 7", text:"CocoCay (7:00–5:00) — Chill day" }
-      ],
-      entertainment: [
-        { day:"Day 1", text:"🎭 Headliner (9:30–10:20) • 🎶 Sing-Along (11:50–12:00) • 🎉 Balloon Drop/DJ (12:00–Late)" },
-        { day:"Day 2", text:"🎤 Adult Comedy (11:30–12:25)" },
-        { day:"Day 3", text:"🎭 Wizard of Oz (4:30–6:10) • 🎤 Adult Comedy (11:30–12:25)" },
-        { day:"Day 4", text:"🎮 Love & Marriage (9:00–10:00)", tags:["priority"] },
-        { day:"Day 5", text:"🎮 Price Is Right (7:00–8:00) • 🎮 Crazy Quest (11:00–11:45)", tags:["priority"] },
-        { day:"Day 6", text:"💦 Aqua Action (10:30–11:30)" },
-        { day:"Day 7", text:"🎤 Adult Comedy (10:30–11:25)" }
-      ],
-      risk: [
-        { label:"Early mornings", text:"Day 4 (Zipline) • Day 5 (ATV)" },
-        { label:"Late-night risk", text:"Day 1 (past midnight) • Day 3 (comedy ends 12:25 → early excursion)" , tags:["risk"]},
-        { label:"High-energy days", text:"Day 4 • Day 5" },
-        { label:"Recovery days", text:"Day 2 • Day 6 • Day 7 (choose chill)" },
-        { label:"Best to book more", text:"Day 2 • Day 6 (Sea Days)" }
-      ]
-    },
-
-    // Day details: these power Today + Full Day-by-Day
-    days: {
-      d1: {
-        chips: ["📍 Miami → Sail Away", "🍽️ 🟨 Flexible (6:30–?)", "🧯 Safety briefing required"],
-        events: [
-          { start:"16:30", end:"17:00", title:"🎉 Sail Away Party", venue:"Pool Deck D16" },
-          { start:"18:30", end:null, title:"🟨🍽️ My Time Dining", tags:["flex"] },
-          { start:"21:30", end:"22:20", title:"🎭 Headliner", venue:"Royal Theater D4" },
-          { start:"23:50", end:"24:00", title:"🎶 Sing-Along", venue:"Promenade D5" },
-          { start:"24:00", end:null, title:"🎉 Balloon Drop + DJ", venue:"Promenade D5 / Music Hall D3" }
-        ]
-      },
-      d2: {
-        chips: ["🌊 Sea Day", "🍽️🔒 6:45–?"],
-        events: [
-          { start:"18:45", end:null, title:"🍽️🔒 My Time Dining", tags:["locked"] },
-          { start:"23:30", end:"24:25", title:"🎤 Adult Comedy (18+)", venue:"The Attic D6" }
-        ]
-      },
-      d3: {
-        chips: ["🏝️ Puerto Costa Maya (8:00–5:00)", "🟨🍽️ Dining shifted (7:00–?)", "⚠️ Late-night risk"],
-        events: [
-          { start:"08:00", end:"17:00", title:"🏝️ Port day (explore)" },
-          { start:"16:30", end:"18:10", title:"🎭 Wizard of Oz", venue:"Royal Theater D4" },
-          { start:"19:00", end:null, title:"🟨🍽️ My Time Dining", tags:["flex"] },
-          { start:"23:30", end:"24:25", title:"🎤 Adult Comedy (18+)", venue:"The Attic D6", tags:["risk"] }
-        ]
-      },
-      d4: {
-        chips: ["🏝️ Roatán (7:00–4:00)", "🧗‍♂️ Zipline 9:00 (meet ~8:30)", "🍽️🔒 6:45–?"],
-        events: [
-          { start:"08:30", end:null, title:"⏱️ Be at pickup/meet location" },
-          { start:"09:00", end:null, title:"🧗‍♂️ Zipline Excursion (port)" },
-          { start:"18:45", end:null, title:"🍽️🔒 My Time Dining", tags:["locked"] },
-          { start:"21:00", end:"22:00", title:"🎮 Love & Marriage", venue:"Royal Theater D4", tags:["priority"] }
-        ]
-      },
-      d5: {
-        chips: ["🏝️ Cozumel (8:00–6:00)", "🛞 ATV 10:00 (ready ~9:30)", "🍽️🔒 8:30–?"],
-        events: [
-          { start:"09:30", end:null, title:"⏱️ Ready/meeting buffer" },
-          { start:"10:00", end:null, title:"🛞 ATV + Jade Caverns Excursion" },
-          { start:"19:00", end:"20:00", title:"🎮 Price Is Right", venue:"Royal Theater D4", tags:["priority"] },
-          { start:"20:30", end:null, title:"🍽️🔒 My Time Dining", tags:["locked"] },
-          { start:"23:00", end:"23:45", title:"🎮 Crazy Quest", venue:"Absolute Zero D6", tags:["priority"] }
-        ]
-      },
-      d6: {
-        chips: ["🌊 Sea Day", "🟨🍽️ Flexible (6:30–?)"],
-        events: [
-          { start:"18:30", end:null, title:"🟨🍽️ My Time Dining", tags:["flex"] },
-          { start:"22:30", end:"23:30", title:"💦 Aqua Action", venue:"AquaTheater D15" }
-        ]
-      },
-      d7: {
-        chips: ["🏝️ CocoCay (7:00–5:00)", "🍽️🔒 6:45–?"],
-        events: [
-          { start:"07:00", end:"17:00", title:"🏝️ Island day" },
-          { start:"18:45", end:null, title:"🍽️🔒 My Time Dining", tags:["locked"] },
-          { start:"22:30", end:"23:25", title:"🎤 Adult Comedy (18+)", venue:"Royal Theater D4" }
-        ]
-      }
-    },
-
-    // Visual grid time slots (edit these if you want different rows)
-    gridSlots: [
-      { label:"4:30–6:10", start:"16:30", end:"18:10" },
-      { label:"6:30–9:30", start:"18:30", end:"21:30" },
-      { label:"7:00–8:00", start:"19:00", end:"20:00" },
-      { label:"8:30–?", start:"20:30", end:null },
-      { label:"9:00–10:00", start:"21:00", end:"22:00" },
-      { label:"9:30–10:20", start:"21:30", end:"22:20" },
-      { label:"10:30–11:30", start:"22:30", end:"23:30" },
-      { label:"11:00–11:45", start:"23:00", end:"23:45" },
-      { label:"11:30–12:25", start:"23:30", end:"24:25" },
-      { label:"11:50–12:00", start:"23:50", end:"24:00" },
-      { label:"12:00–Late", start:"24:00", end:null }
+  glance: {
+    dining: [
+      { day:"Day 1", text:"🟨🍽️ Flexible (6:30–?)", tags:["flex"] },
+      { day:"Day 2", text:"🍽️🔒 Booked (6:45–?)", tags:["locked"] },
+      { day:"Day 3", text:"🟨🍽️ Shifted placeholder (7:00–?)", tags:["flex"] },
+      { day:"Day 4", text:"🍽️🔒 Booked (6:45–?)", tags:["locked"] },
+      { day:"Day 5", text:"🍽️🔒 Booked (8:30–?)", tags:["locked"] },
+      { day:"Day 6", text:"🟨🍽️ Flexible (6:30–?)", tags:["flex"] },
+      { day:"Day 7", text:"🟨🍽️ Post-Starburst dining (after ~8:15)", tags:["flex"] }
     ],
+    ports: [
+      { day:"Day 3", text:"Puerto Costa Maya (8:00–5:00) — Explore" },
+      { day:"Day 4", text:"Roatán (7:00–4:00) — 🧗‍♂️ Zipline 9:00 (meet ~8:30)" },
+      { day:"Day 5", text:"Cozumel (8:00–6:00) — 🛞 ATV + Jade Caverns 10:00 (ready ~9:30)" },
+      { day:"Day 7", text:"CocoCay (7:00–5:00) — Chill day" }
+    ],
+    entertainment: [
+      { day:"Day 1", text:"🎭 Headliner (9:30–10:20) • 🎶 Sing-Along (11:50–12:00) • 🎉 Balloon Drop/DJ (12:00–Late)" },
+      { day:"Day 2", text:"🎤 Adult Comedy (11:30–12:25)" },
+      { day:"Day 3", text:"🎭 Wizard of Oz (4:30–6:10) • 🎤 Adult Comedy (11:30–12:25)" },
+      { day:"Day 4", text:"🎮 Love & Marriage (9:00–10:00)", tags:["priority"] },
+      { day:"Day 5", text:"🎮 Price Is Right (7:00–8:00) • 🎮 Crazy Quest (11:00–11:45)", tags:["priority"] },
+      { day:"Day 6", text:"💦 Aqua Action (10:30–11:30)" },
+      { day:"Day 7", text:"✨ Starburst (7:15–~8:05) • 🎤 Adult Comedy (10:30–11:25)" }
+    ],
+    risk: [
+      { label:"Early mornings", text:"Day 4 (Zipline) • Day 5 (ATV)" },
+      { label:"Late-night risk", text:"Day 1 (past midnight) • Day 3 (comedy ends 12:25 → early excursion)", tags:["risk"] },
+      { label:"High-energy days", text:"Day 4 • Day 5" },
+      { label:"Recovery days", text:"Day 2 • Day 6 • Day 7 (choose chill)" },
+      { label:"Best to book more", text:"Day 2 • Day 6 (Sea Days)" }
+    ]
+  },
 
-    debark: { when:"Jan 31 • 6:00 AM", text:"🧳 Arrive Miami — plan bags/exit timing accordingly" }
-  };
+  days: {
+    d1: {
+      chips: ["📍 Miami → Sail Away", "🍽️ 🟨 Flexible (6:30–?)", "🧯 Safety briefing required"],
+      events: [
+        { start:"16:30", end:"17:00", title:"🎉 Sail Away Party", venue:"Pool Deck D16" },
+        { start:"18:30", end:null, title:"🟨🍽️ My Time Dining", tags:["flex"] },
+        { start:"21:30", end:"22:20", title:"🎭 Headliner", venue:"Royal Theater D4" },
+        { start:"23:50", end:"24:00", title:"🎶 Sing-Along", venue:"Promenade D5" },
+        { start:"24:00", end:null, title:"🎉 Balloon Drop + DJ", venue:"Promenade D5 / Music Hall D3" }
+      ]
+    },
+
+    d2: {
+      chips: ["🌊 Sea Day", "🍽️🔒 6:45–?"],
+      events: [
+        { start:"18:45", end:null, title:"🍽️🔒 My Time Dining", tags:["locked"] },
+        { start:"23:30", end:"24:25", title:"🎤 Adult Comedy (18+)", venue:"The Attic D6" }
+      ]
+    },
+
+    d3: {
+      chips: ["🏝️ Puerto Costa Maya (8:00–5:00)", "🟨🍽️ Dining shifted (7:00–?)", "⚠️ Late-night risk"],
+      events: [
+        { start:"08:00", end:"17:00", title:"🏝️ Port day (explore)" },
+        { start:"16:30", end:"18:10", title:"🎭 Wizard of Oz", venue:"Royal Theater D4" },
+        { start:"19:00", end:null, title:"🟨🍽️ My Time Dining", tags:["flex"] },
+        { start:"23:30", end:"24:25", title:"🎤 Adult Comedy (18+)", venue:"The Attic D6", tags:["risk"] }
+      ]
+    },
+
+    d4: {
+      chips: ["🏝️ Roatán (7:00–4:00)", "🧗‍♂️ Zipline 9:00 (meet ~8:30)", "🍽️🔒 6:45–?"],
+      events: [
+        { start:"08:30", end:null, title:"⏱️ Be at pickup/meet location" },
+        { start:"09:00", end:null, title:"🧗‍♂️ Zipline Excursion (port)" },
+        { start:"18:45", end:null, title:"🍽️🔒 My Time Dining", tags:["locked"] },
+        { start:"21:00", end:"22:00", title:"🎮 Love & Marriage", venue:"Royal Theater D4", tags:["priority"] }
+      ]
+    },
+
+    d5: {
+      chips: ["🏝️ Cozumel (8:00–6:00)", "🛞 ATV 10:00 (ready ~9:30)", "🍽️🔒 8:30–?"],
+      events: [
+        { start:"09:30", end:null, title:"⏱️ Ready/meeting buffer" },
+        { start:"10:00", end:null, title:"🛞 ATV + Jade Caverns Excursion" },
+        { start:"19:00", end:"20:00", title:"🎮 Price Is Right", venue:"Royal Theater D4", tags:["priority"] },
+        { start:"20:30", end:null, title:"🍽️🔒 My Time Dining", tags:["locked"] },
+        { start:"23:00", end:"23:45", title:"🎮 Crazy Quest", venue:"Absolute Zero D6", tags:["priority"] }
+      ]
+    },
+
+    d6: {
+      chips: ["🌊 Sea Day", "🟨🍽️ Flexible (6:30–?)"],
+      events: [
+        { start:"18:30", end:null, title:"🟨🍽️ My Time Dining", tags:["flex"] },
+        { start:"22:30", end:"23:30", title:"💦 Aqua Action", venue:"AquaTheater D15" }
+      ]
+    },
+
+    d7: {
+      chips: ["🏝️ CocoCay (7:00–5:00)", "✨ Starburst @ 7:15", "🟨🍽️ Dining after Starburst"],
+      events: [
+        { start:"07:00", end:"17:00", title:"🏝️ Island day" },
+        { start:"19:15", end:"20:05", title:"✨ Starburst: Elemental Beauty", venue:"Absolute Zero D6" },
+        { start:"20:15", end:null, title:"🟨🍽️ Dinner (post-Starburst placeholder)", tags:["flex"] },
+        { start:"22:30", end:"23:25", title:"🎤 Adult Comedy (18+)", venue:"Royal Theater D4" }
+      ]
+    }
+  },
+
+  gridSlots: [
+    { label:"4:30–6:10", start:"16:30", end:"18:10" },
+    { label:"6:30–9:30", start:"18:30", end:"21:30" },
+    { label:"7:00–8:00", start:"19:00", end:"20:00" },
+    { label:"8:30–?", start:"20:30", end:null },
+    { label:"9:00–10:00", start:"21:00", end:"22:00" },
+    { label:"9:30–10:20", start:"21:30", end:"22:20" },
+    { label:"10:30–11:30", start:"22:30", end:"23:30" },
+    { label:"11:00–11:45", start:"23:00", end:"23:45" },
+    { label:"11:30–12:25", start:"23:30", end:"24:25" },
+    { label:"11:50–12:00", start:"23:50", end:"24:00" },
+    { label:"12:00–Late", start:"24:00", end:null }
+  ],
+
+  debark: {
+    when:"Jan 31 • 6:00 AM",
+    text:"🧳 Arrive Miami — plan bags/exit timing accordingly"
+  }
+};
+
   </script>
 
   <script>
