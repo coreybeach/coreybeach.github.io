@@ -15,11 +15,6 @@
       --shadow:0 10px 30px rgba(0,0,0,.35);
       --radius:16px;
 
-      --blue:#60a5fa;
-      --green:#34d399;
-      --yellow:#fbbf24;
-      --red:#f87171;
-
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
     }
 
@@ -108,8 +103,8 @@
       border-radius: 14px;
       border: 1px solid var(--border);
       background: rgba(16,26,46,.75);
-      color: #e5e7eb;
-      font-weight: 600;
+      color: #ffffff; /* FIX: ensure day labels are readable */
+      font-weight: 700;
       font-size: 13px;
       cursor: pointer;
       user-select: none;
@@ -131,8 +126,8 @@
     .daypanel{display:none}
     .daypanel.active{display:block}
 
-    /* Tag pills (matches your screenshot vibe) */
-    .tagbar{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
+    /* Tag pills – color fixes + match your screenshot vibe */
+    .eventtags{margin-top:8px; display:flex; gap:8px; flex-wrap:wrap}
     .tagpill{
       display:inline-flex;
       align-items:center;
@@ -144,11 +139,28 @@
       background: rgba(255,255,255,.03);
       color: var(--text);
       white-space:nowrap;
+      font-weight:700;
     }
-    .tagpill.locked{ background: rgba(52,211,153,.16); border-color: rgba(52,211,153,.35); }
-    .tagpill.flex{   background: rgba(251,191,36,.16); border-color: rgba(251,191,36,.35); color:#fff; }
-    .tagpill.priority{ background: rgba(96,165,250,.16); border-color: rgba(96,165,250,.35); }
-    .tagpill.risk{   background: rgba(248,113,113,.16); border-color: rgba(248,113,113,.35); }
+    .tagpill.locked{
+      background: rgba(16,185,129,.18);
+      color: #10b981;
+      border: 1px solid rgba(16,185,129,.35);
+    }
+    .tagpill.flex{
+      background: rgba(245,158,11,.20);
+      color: #f59e0b;
+      border: 1px solid rgba(245,158,11,.35);
+    }
+    .tagpill.priority{
+      background: rgba(59,130,246,.18);
+      color: #3b82f6;
+      border: 1px solid rgba(59,130,246,.35);
+    }
+    .tagpill.risk{
+      background: rgba(239,68,68,.18);
+      color: #ef4444;
+      border: 1px solid rgba(239,68,68,.35);
+    }
 
     /* Grid table */
     .table-wrap{
@@ -190,7 +202,6 @@
     td .eventtitle{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
     td .eventtitle strong{font-weight:650}
     td .eventmeta{margin-top:3px}
-    td .eventtags{margin-top:8px; display:flex; gap:8px; flex-wrap:wrap}
     .cell-muted{color: var(--muted)}
     .footer{margin-top:18px; color: var(--muted); font-size:12px; text-align:center;}
     .codehint{
@@ -265,15 +276,16 @@
     <section id="edit">
       <div class="section-head">
         <h2>🛠️ Easy edits</h2>
-        <div class="note">Change only the JSON block below (no HTML/CSS changes needed).</div>
+        <div class="note">Change only the data block below (no HTML/CSS changes needed).</div>
       </div>
       <div class="card">
         <h3>Common edits</h3>
         <div class="codehint">
 1) Update times by editing: days.dX.events[].start/end (24h "HH:MM", use "24:00" for midnight)
-2) Mark status with tags: ["locked"] / ["flex"] / ["priority"] / ["risk"]
-3) Dining placeholders: use end:null and tags:["flex"]
-4) Grid colors come from tags automatically (green=Booked, yellow=Flexible, blue=Priority, red=Risk)
+2) Status uses tags: ["locked"] (Booked) / ["flex"] (Flexible) / ["priority"] / ["risk"]
+3) For open-ended items, keep end:null so it displays "–?" in lists,
+   but use grid_mins to control grid placement (prevents repeating in every block).
+   Example: { start:"18:30", end:null, grid_mins:75, tags:["flex"] }
         </div>
       </div>
     </section>
@@ -285,8 +297,7 @@
 
   <script>
     /*****************************************************************
-     * EDIT HERE: CRUISE_DATA (easy-to-edit JSON-like object)
-     * - I removed the yellow-square emoji style; status now comes from tags.
+     * EDIT HERE: CRUISE_DATA
      *****************************************************************/
     const CRUISE_DATA = {
       meta: {
@@ -324,8 +335,8 @@
           { day:"Day 3", text:"Wizard of Oz (4:30–6:10) • Adult Comedy (11:30–12:25)" },
           { day:"Day 4", text:"Love & Marriage (9:00–10:00)", tags:["priority"] },
           { day:"Day 5", text:"Price Is Right (7:00–8:00) • Crazy Quest (11:00–11:45)", tags:["priority"] },
-          { day:"Day 6", text:"Aqua Action (10:30–11:30)" },
-          { day:"Day 7", text:"Starburst (7:15–8:05) • Adult Comedy (10:30–11:25)" }
+          { day:"Day 6", text:"Aqua Action (10:30–11:30)", tags:["locked"] },
+          { day:"Day 7", text:"Starburst (7:15–8:05) • Adult Comedy (10:30–11:25)", tags:["locked"] }
         ],
         risk: [
           { label:"Early mornings", text:"Day 4 (Zipline) • Day 5 (ATV)" },
@@ -337,7 +348,7 @@
         logistics: [
           { label:"Arrive early rule", text:"Aim to be seated ~10–15 min before shows; meet buffers ~30 min for excursions." },
           { label:"Venue quick map", text:"Royal Theater (Deck 4 Fwd) • The Attic (Deck 6 Fwd) • Absolute Zero (Deck 6 Aft) • AquaTheater (Deck 15 Fwd) • Promenade (Deck 5 Mid) • Music Hall (Deck 3 Fwd)" },
-          { label:"Safety briefing", text:"Complete mandatory guest safety briefing on Day 1 (as shown in app window).", tags:["priority"] },
+          { label:"Safety briefing", text:"Complete mandatory guest safety briefing on Day 1.", tags:["priority"] },
           { label:"Ship time", text:"All times shown are Ship Time." }
         ]
       },
@@ -347,17 +358,17 @@
           chips: ["📍 Miami → Sail Away", "🍽️ Dining flexible", "🧯 Safety briefing required"],
           events: [
             { start:"16:30", end:"17:00", title:"🎉 Sail Away Party", venue:"Pool Deck (D16)" },
-            { start:"18:30", end:null, title:"🍽️ My Time Dining", tags:["flex"] },
+            { start:"18:30", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["flex"] },
             { start:"21:30", end:"22:20", title:"🎭 Headliner", venue:"Royal Theater (D4 Fwd)" },
             { start:"23:50", end:"24:00", title:"🎶 Big Welcome Sing-Along", venue:"Royal Promenade (D5 Mid)" },
-            { start:"24:00", end:null, title:"🎉 Balloon Drop + After Hours DJ", venue:"Promenade (D5 Mid) / Music Hall (D3 Fwd)" }
+            { start:"24:00", end:null, grid_mins:60, title:"🎉 Balloon Drop + After Hours DJ", venue:"Promenade (D5 Mid) / Music Hall (D3 Fwd)" }
           ]
         },
 
         d2: {
           chips: ["🌊 Sea Day", "🍽️ Booked dining"],
           events: [
-            { start:"18:45", end:null, title:"🍽️ My Time Dining", tags:["locked"] },
+            { start:"18:45", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["locked"] },
             { start:"23:30", end:"24:25", title:"🎤 Adult Comedy (18+)", venue:"The Attic (D6 Fwd)" }
           ]
         },
@@ -367,7 +378,7 @@
           events: [
             { start:"08:00", end:"17:00", title:"🏝️ Port day (explore)" },
             { start:"16:30", end:"18:10", title:"🎭 The Wizard of Oz", venue:"Royal Theater (D4 Fwd)" },
-            { start:"19:00", end:null, title:"🍽️ My Time Dining", tags:["flex"] },
+            { start:"19:00", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["flex"] },
             { start:"23:30", end:"24:25", title:"🎤 Adult Comedy (18+)", venue:"The Attic (D6 Fwd)", tags:["risk"] }
           ]
         },
@@ -375,9 +386,9 @@
         d4: {
           chips: ["🏝️ Roatán (7:00–4:00)", "🧗 Zipline 9:00 (meet ~8:30)", "🍽️ Booked dining"],
           events: [
-            { start:"08:30", end:null, title:"⏱️ Meet buffer (excursion)", tags:["priority"] },
-            { start:"09:00", end:null, title:"🧗 Zip & Dip (Excursion)", venue:"Port of Roatán", tags:["priority"] },
-            { start:"18:45", end:null, title:"🍽️ My Time Dining", tags:["locked"] },
+            { start:"08:30", end:null, grid_mins:30, title:"⏱️ Meet buffer (excursion)", tags:["priority"] },
+            { start:"09:00", end:null, grid_mins:180, title:"🧗 Zip & Dip (Excursion)", venue:"Port of Roatán", tags:["priority"] },
+            { start:"18:45", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["locked"] },
             { start:"21:00", end:"22:00", title:"🎮 Game Show: Love & Marriage", venue:"Royal Theater (D4 Fwd)", tags:["priority"] }
           ]
         },
@@ -385,10 +396,10 @@
         d5: {
           chips: ["🏝️ Cozumel (8:00–6:00)", "🛞 ATV 10:00 (ready ~9:30)", "🍽️ Booked dining 8:30"],
           events: [
-            { start:"09:30", end:null, title:"⏱️ Ready buffer (excursion)", tags:["priority"] },
-            { start:"10:00", end:null, title:"🛞 ATV Ride to Jade Caverns (Excursion)", venue:"Cozumel", tags:["priority"] },
+            { start:"09:30", end:null, grid_mins:30, title:"⏱️ Ready buffer (excursion)", tags:["priority"] },
+            { start:"10:00", end:null, grid_mins:240, title:"🛞 ATV Ride to Jade Caverns (Excursion)", venue:"Cozumel", tags:["priority"] },
             { start:"19:00", end:"20:00", title:"🎮 Price Is Right – Everyone’s a Contestant", venue:"Royal Theater (D4 Fwd)", tags:["priority"] },
-            { start:"20:30", end:null, title:"🍽️ My Time Dining", tags:["locked"] },
+            { start:"20:30", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["locked"] },
             { start:"23:00", end:"23:45", title:"🎮 The Crazy Quest (18+)", venue:"Absolute Zero (D6 Aft)", tags:["priority"] }
           ]
         },
@@ -396,7 +407,7 @@
         d6: {
           chips: ["🌊 Sea Day", "🍽️ Dining flexible", "💦 Aqua Action booked"],
           events: [
-            { start:"18:30", end:null, title:"🍽️ My Time Dining", tags:["flex"] },
+            { start:"18:30", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["flex"] },
             { start:"22:30", end:"23:30", title:"💦 AQUA ACTION!", venue:"AquaTheater (D15 Fwd)", tags:["locked"] }
           ]
         },
@@ -406,12 +417,14 @@
           events: [
             { start:"07:00", end:"17:00", title:"🏝️ Perfect Day at CocoCay" },
             { start:"19:15", end:"20:05", title:"✨ Starburst: Elemental Beauty", venue:"Absolute Zero (D6 Aft)", tags:["locked"] },
-            { start:"20:15", end:null, title:"🍽️ Dinner (placeholder after Starburst)", tags:["flex"] },
+            { start:"20:15", end:null, grid_mins:60, title:"🍽️ Dinner (placeholder after Starburst)", tags:["flex"] },
             { start:"22:30", end:"23:25", title:"🎤 Adult Comedy (18+)", venue:"Royal Theater (D4 Fwd)" }
           ]
         }
       },
 
+      /* Evening-focused grid blocks. Because dining is open-ended, we use grid_mins
+         so it only shows in ONE block instead of all blocks. */
       gridSlots: [
         { label:"4:30–6:10", start:"16:30", end:"18:10" },
         { label:"6:30–9:30", start:"18:30", end:"21:30" },
@@ -484,37 +497,36 @@
       `;
     }
 
+    /* FIX: Open-ended events (end:null) no longer spill into every grid block.
+       Use grid_mins when present; otherwise short defaults. */
     function isDiningEvent(ev){
-  const t = (ev.title || "").toLowerCase();
-  const tags = new Set(ev.tags || []);
-  return t.includes("dining") || tags.has("locked") || tags.has("flex");
-}
+      const t = (ev.title || "").toLowerCase();
+      return t.includes("dining") || t.includes("dinner");
+    }
 
-function eventEndForGrid(ev){
-  // If the event has an explicit end, use it.
-  if(ev.end) return toMin(ev.end);
+    function eventEndForGrid(ev){
+      const start = toMin(ev.start);
+      if(start == null) return null;
 
-  const start = toMin(ev.start);
-  if(start == null) return null;
+      if(ev.end) return toMin(ev.end);
 
-  // Only dining (or true "open-ended") should span late blocks.
-  if(isDiningEvent(ev)) return 24*60 + 120;
+      if(Number.isFinite(ev.grid_mins)) return start + ev.grid_mins;
 
-  // Otherwise, treat end:null as a short block for grid placement
-  // (prevents morning excursions from showing in dinner rows).
-  return start + 60; // 60 min default (adjust if you want 30)
-}
+      if(isDiningEvent(ev)) return start + 75; // show dining once by default
 
-function overlaps(slot, ev){
-  const s1 = toMin(slot.start);
-  const e1 = toMin(slot.end) ?? (24*60 + 120);
+      return start + 60; // default for other open-ended events
+    }
 
-  const s2 = toMin(ev.start);
-  const e2 = eventEndForGrid(ev) ?? (s2 + 60);
+    function overlaps(slot, ev){
+      const s1 = toMin(slot.start);
+      const e1 = toMin(slot.end) ?? (24*60 + 120);
 
-  return (s2 < e1) && (e2 > s1);
-}
+      const s2 = toMin(ev.start);
+      const e2 = eventEndForGrid(ev);
 
+      if(s2 == null || e2 == null) return false;
+      return (s2 < e1) && (e2 > s1);
+    }
 
     /*********************
      * Render: Today
@@ -555,7 +567,6 @@ function overlaps(slot, ev){
         todayPanel.appendChild(panel);
       });
 
-      // hook day switching
       const buttons = Array.from(document.querySelectorAll(".daybtn"));
       const panels = Array.from(document.querySelectorAll(".daypanel"));
       function setDay(id){
@@ -585,7 +596,6 @@ function overlaps(slot, ev){
             </li>
           `).join("")}</ul>`;
         }
-        // label/text
         return `<ul class="list">${items.map(it => `
           <li class="li">
             <div class="when">${it.label}</div>
@@ -626,8 +636,6 @@ function overlaps(slot, ev){
 
     /*********************
      * Render: Visual grid
-     * - Uses the same tags as everywhere else (Booked/Flexible/etc. pills)
-     * - No yellow-square emoji. Status is derived from tags.
      *********************/
     function renderGrid(){
       const wrap = document.getElementById("gridTable");
@@ -697,9 +705,6 @@ function overlaps(slot, ev){
       el.innerHTML = dayCards + debark;
     }
 
-    /*********************
-     * Boot
-     *********************/
     function boot(){
       document.getElementById("subtitle").textContent = CRUISE_DATA.meta.subtitle || "";
       renderToday();
