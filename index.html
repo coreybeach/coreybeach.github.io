@@ -484,13 +484,37 @@
       `;
     }
 
-    function overlaps(slot, ev){
-      const s1 = toMin(slot.start);
-      const e1 = toMin(slot.end) ?? (24*60 + 120); // treat open-ended as late
-      const s2 = toMin(ev.start);
-      const e2 = toMin(ev.end) ?? (24*60 + 120);
-      return (s2 < e1) && (e2 > s1);
-    }
+    function isDiningEvent(ev){
+  const t = (ev.title || "").toLowerCase();
+  const tags = new Set(ev.tags || []);
+  return t.includes("dining") || tags.has("locked") || tags.has("flex");
+}
+
+function eventEndForGrid(ev){
+  // If the event has an explicit end, use it.
+  if(ev.end) return toMin(ev.end);
+
+  const start = toMin(ev.start);
+  if(start == null) return null;
+
+  // Only dining (or true "open-ended") should span late blocks.
+  if(isDiningEvent(ev)) return 24*60 + 120;
+
+  // Otherwise, treat end:null as a short block for grid placement
+  // (prevents morning excursions from showing in dinner rows).
+  return start + 60; // 60 min default (adjust if you want 30)
+}
+
+function overlaps(slot, ev){
+  const s1 = toMin(slot.start);
+  const e1 = toMin(slot.end) ?? (24*60 + 120);
+
+  const s2 = toMin(ev.start);
+  const e2 = eventEndForGrid(ev) ?? (s2 + 60);
+
+  return (s2 < e1) && (e2 > s1);
+}
+
 
     /*********************
      * Render: Today
