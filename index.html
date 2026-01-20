@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Cruise Master Plan</title>
   <style>
     :root{
@@ -11,27 +11,29 @@
       --card2:#0f172a;
       --text:#e5e7eb;
       --muted:#a6b0c3;
-      --accent:#60a5fa;
-      --accent2:#34d399;
-      --warn:#fbbf24;
-      --danger:#f87171;
       --border:rgba(255,255,255,.08);
       --shadow:0 10px 30px rgba(0,0,0,.35);
       --radius:16px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      --blue:#60a5fa;
+      --green:#34d399;
+      --yellow:#fbbf24;
+      --red:#f87171;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
     }
+
     *{box-sizing:border-box}
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      background: radial-gradient(900px 600px at 20% -10%, rgba(96,165,250,.22), transparent 55%),
-                  radial-gradient(900px 600px at 80% 0%, rgba(52,211,153,.18), transparent 55%),
-                  var(--bg);
+      background:
+        radial-gradient(900px 600px at 20% -10%, rgba(96,165,250,.22), transparent 55%),
+        radial-gradient(900px 600px at 80% 0%, rgba(52,211,153,.18), transparent 55%),
+        var(--bg);
       color:var(--text);
       line-height:1.35;
     }
-    a{color:inherit; text-decoration:none}
-    .wrap{max-width:1100px; margin:0 auto; padding:16px 14px 70px;}
 
     .topbar{
       position:sticky; top:0; z-index:50;
@@ -47,29 +49,30 @@
     .brand .title{font-weight:800; letter-spacing:.2px}
     .brand .sub{color:var(--muted); font-size:12px}
     .nav{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
-    .pill{
+    .pilllink{
       padding:8px 10px; border-radius:999px;
       border:1px solid var(--border);
       background: rgba(16,26,46,.65);
       font-size:13px;
       transition:.15s transform ease, .15s background ease;
       white-space:nowrap;
+      color:inherit; text-decoration:none;
     }
-    .pill:active{transform: scale(.98)}
-    .pill:hover{background: rgba(16,26,46,.9)}
-    .pill.accent{border-color: rgba(96,165,250,.35)}
+    .pilllink:hover{background: rgba(16,26,46,.9)}
+    .pilllink:active{transform:scale(.98)}
+    .pilllink.accent{border-color: rgba(96,165,250,.35)}
 
+    .wrap{max-width:1100px; margin:0 auto; padding:16px 14px 70px;}
     section{margin-top:18px}
     .section-head{
       display:flex; align-items:flex-end; justify-content:space-between; gap:10px; margin:8px 0 10px;
     }
-    h2{margin:0; font-size:18px; letter-spacing:.2px;}
-    .note{color:var(--muted); font-size:12px;}
+    h2{margin:0; font-size:18px; letter-spacing:.2px}
+    .note{color:var(--muted); font-size:12px}
 
     .grid{display:grid; grid-template-columns: 1fr; gap:12px;}
-    @media (min-width: 860px){
-      .grid.two{grid-template-columns: 1fr 1fr}
-    }
+    @media (min-width: 860px){ .grid.two{grid-template-columns: 1fr 1fr} }
+
     .card{
       background: linear-gradient(180deg, rgba(16,26,46,.92), rgba(15,23,42,.92));
       border:1px solid var(--border);
@@ -84,22 +87,19 @@
       border:1px solid var(--border);
       background: rgba(255,255,255,.03);
     }
+
     .list{margin:10px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px;}
     .li{padding:10px 10px; border-radius: 12px; background: rgba(255,255,255,.03); border:1px solid var(--border);}
     .li .when{font-family:var(--mono); color:#cdd6e7; font-size:12px}
     .li .what{margin-top:2px}
-    .tag{
-      display:inline-block; font-size:11px; padding:3px 8px; border-radius:999px;
-      margin-left:8px; border:1px solid var(--border); color:var(--muted); vertical-align:middle;
-    }
-    .tag.priority{color:#0b1220; background: var(--warn); border-color: rgba(251,191,36,.35)}
-    .tag.locked{color:#0b1220; background: var(--accent2); border-color: rgba(52,211,153,.35)}
-    .tag.flex{color:#0b1220; background: var(--warn); border-color: rgba(251,191,36,.35)}
-    .tag.risk{color:#0b1220; background: var(--danger); border-color: rgba(248,113,113,.35)}
+    .muted{color:var(--muted)}
+    .small{font-size:12px; color: var(--muted)}
 
+    /* Day selector */
     .daybar{
       display:flex; gap:8px; overflow:auto; padding-bottom:6px;
-      -webkit-overflow-scrolling: touch; scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
     }
     .daybar::-webkit-scrollbar{display:none}
     .daybtn{
@@ -128,21 +128,36 @@
       box-shadow: 0 0 0 2px rgba(96,165,250,.25) inset;
     }
 
-    .timeline{margin-top:10px}
     .daypanel{display:none}
     .daypanel.active{display:block}
 
+    /* Tag pills (matches your screenshot vibe) */
+    .tagbar{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
+    .tagpill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      white-space:nowrap;
+    }
+    .tagpill.locked{ background: rgba(52,211,153,.16); border-color: rgba(52,211,153,.35); }
+    .tagpill.flex{   background: rgba(251,191,36,.16); border-color: rgba(251,191,36,.35); color:#fff; }
+    .tagpill.priority{ background: rgba(96,165,250,.16); border-color: rgba(96,165,250,.35); }
+    .tagpill.risk{   background: rgba(248,113,113,.16); border-color: rgba(248,113,113,.35); }
+
+    /* Grid table */
     .table-wrap{
       overflow:auto;
       border-radius: var(--radius);
       border:1px solid var(--border);
       background: rgba(16,26,46,.55);
     }
-    table{
-      width:100%;
-      border-collapse: collapse;
-      min-width: 980px;
-    }
+    table{ width:100%; border-collapse:collapse; min-width:980px; }
     th, td{
       border-bottom:1px solid var(--border);
       border-right:1px solid var(--border);
@@ -166,17 +181,31 @@
       font-family: var(--mono);
       font-size:12px;
       color:#cdd6e7;
-      width:120px;
+      width:130px;
     }
     tr:last-child td{border-bottom:none}
     td:last-child, th:last-child{border-right:none}
+    td .eventline{margin:0 0 10px}
+    td .eventline:last-child{margin-bottom:0}
+    td .eventtitle{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
+    td .eventtitle strong{font-weight:650}
+    td .eventmeta{margin-top:3px}
+    td .eventtags{margin-top:8px; display:flex; gap:8px; flex-wrap:wrap}
     .cell-muted{color: var(--muted)}
-    .small{font-size:12px; color: var(--muted)}
     .footer{margin-top:18px; color: var(--muted); font-size:12px; text-align:center;}
-    .kbd{font-family:var(--mono); font-size:12px; padding:2px 6px; border:1px solid var(--border); border-radius:8px; background: rgba(255,255,255,.03)}
+    .codehint{
+      font-family: var(--mono);
+      font-size:12px;
+      color: var(--muted);
+      white-space:pre-wrap;
+      background: rgba(255,255,255,.03);
+      border:1px solid var(--border);
+      border-radius: 12px;
+      padding:10px;
+      margin-top:10px;
+    }
   </style>
 </head>
-
 <body>
   <div class="topbar">
     <div class="topbar-inner">
@@ -185,417 +214,451 @@
         <div class="sub" id="subtitle">All times = ship time • Offline-friendly</div>
       </div>
       <nav class="nav">
-        <a class="pill accent" href="#today">Today</a>
-        <a class="pill" href="#glance">At-a-glance</a>
-        <a class="pill" href="#grid">Visual grid</a>
-        <a class="pill" href="#days">Days</a>
+        <a class="pilllink accent" href="#today">Today</a>
+        <a class="pilllink" href="#glance">At-a-glance</a>
+        <a class="pilllink" href="#grid">Visual grid</a>
+        <a class="pilllink" href="#days">Days</a>
+        <a class="pilllink" href="#edit">Edit tips</a>
       </nav>
     </div>
   </div>
 
   <div class="wrap">
-    <!-- TODAY -->
     <section id="today">
       <div class="section-head">
         <h2>📌 Today (tap a day below)</h2>
-        <div class="note">Edit the JSON once → page updates everywhere.</div>
+        <div class="note">Tip: Add to Home Screen for 1-tap access.</div>
       </div>
 
       <div class="card">
-        <div class="daybar" id="daybar" role="tablist" aria-label="Select day"></div>
-        <div class="timeline" id="todayPanels"></div>
+        <div class="daybar" id="daybar"></div>
+        <div class="timeline" id="todayPanel"></div>
       </div>
     </section>
 
-    <!-- AT A GLANCE -->
     <section id="glance">
       <div class="section-head">
-        <h2>👀 At-a-Glance</h2>
+        <h2>👀 At-a-glance</h2>
         <div class="note">Fast decisions without scrolling a full timeline.</div>
       </div>
 
-      <div class="grid two">
-        <div class="card">
-          <h3>🎭 Entertainment</h3>
-          <ul class="list" id="glanceEntertainment"></ul>
-        </div>
-
-        <div class="card">
-          <h3>🏝️ Ports & Excursions</h3>
-          <ul class="list" id="glancePorts"></ul>
-        </div>
-      </div>
-
-      <div class="grid two" style="margin-top:12px">
-        <div class="card">
-          <h3>🍽️ Dining</h3>
-          <ul class="list" id="glanceDining"></ul>
-        </div>
-
-        <div class="card">
-          <h3>⚠️ Risk & Energy</h3>
-          <ul class="list" id="glanceRisk"></ul>
-        </div>
-      </div>
-
-      <div class="note" style="margin-top:10px">
-        Tip: If you edit times, keep <span class="kbd">start</span>/<span class="kbd">end</span> in <span class="kbd">HH:MM</span> (24-hour) so sorting stays correct.
-      </div>
+      <div class="grid two" id="glanceTop"></div>
+      <div class="grid two" style="margin-top:12px" id="glanceBottom"></div>
     </section>
 
-    <!-- VISUAL GRID -->
     <section id="grid">
       <div class="section-head">
-        <h2>🗓️ Visual Grid</h2>
+        <h2>🗓️ Visual grid</h2>
         <div class="note">Scroll horizontally on phone • sticky headers + time column.</div>
       </div>
-
-      <div class="table-wrap">
-        <table aria-label="Visual schedule grid">
-          <thead>
-            <tr id="gridHead"></tr>
-          </thead>
-          <tbody id="gridBody"></tbody>
-        </table>
-      </div>
+      <div class="table-wrap" id="gridTable"></div>
     </section>
 
-    <!-- DAYS -->
     <section id="days">
       <div class="section-head">
-        <h2>📅 Full Day-by-Day</h2>
-        <div class="note">Same data as the grid + logistics.</div>
+        <h2>📅 Full day-by-day</h2>
+        <div class="note">Same data as Today + Grid, but all visible at once.</div>
       </div>
+      <div class="grid two" id="allDays"></div>
+    </section>
 
-      <div class="grid two" id="dayCards"></div>
-
-      <div class="footer">
-        Tip: iPhone Safari → Share → “Add to Home Screen”. Android Chrome → Menu → “Add to Home screen”.
+    <section id="edit">
+      <div class="section-head">
+        <h2>🛠️ Easy edits</h2>
+        <div class="note">Change only the JSON block below (no HTML/CSS changes needed).</div>
+      </div>
+      <div class="card">
+        <h3>Common edits</h3>
+        <div class="codehint">
+1) Update times by editing: days.dX.events[].start/end (24h "HH:MM", use "24:00" for midnight)
+2) Mark status with tags: ["locked"] / ["flex"] / ["priority"] / ["risk"]
+3) Dining placeholders: use end:null and tags:["flex"]
+4) Grid colors come from tags automatically (green=Booked, yellow=Flexible, blue=Priority, red=Risk)
+        </div>
       </div>
     </section>
+
+    <div class="footer">
+      iPhone Safari → Share → “Add to Home Screen”. Android Chrome → Menu → “Add to Home screen”.
+    </div>
   </div>
 
-  <!-- ===========================
-       EDIT THIS JSON ONLY
-       =========================== -->
   <script>
-  const CRUISE_DATA = {
-  meta: {
-    subtitle: "All times = ship time • Offline-friendly",
-    days: [
-      { id:"d1", label:"Day 1", title:"Miami / Sail Away" },
-      { id:"d2", label:"Day 2", title:"Sea Day" },
-      { id:"d3", label:"Day 3", title:"Puerto Costa Maya (8:00–5:00)" },
-      { id:"d4", label:"Day 4", title:"Roatán (7:00–4:00)" },
-      { id:"d5", label:"Day 5", title:"Cozumel (8:00–6:00)" },
-      { id:"d6", label:"Day 6", title:"Sea Day" },
-      { id:"d7", label:"Day 7", title:"CocoCay (7:00–5:00)" }
-    ]
-  },
+    /*****************************************************************
+     * EDIT HERE: CRUISE_DATA (easy-to-edit JSON-like object)
+     * - I removed the yellow-square emoji style; status now comes from tags.
+     *****************************************************************/
+    const CRUISE_DATA = {
+      meta: {
+        subtitle: "All times = ship time • Offline-friendly",
+        days: [
+          { id:"d1", label:"Day 1", title:"Miami / Sail Away" },
+          { id:"d2", label:"Day 2", title:"Sea Day" },
+          { id:"d3", label:"Day 3", title:"Puerto Costa Maya (8:00–5:00)" },
+          { id:"d4", label:"Day 4", title:"Roatán (7:00–4:00)" },
+          { id:"d5", label:"Day 5", title:"Cozumel (8:00–6:00)" },
+          { id:"d6", label:"Day 6", title:"Sea Day" },
+          { id:"d7", label:"Day 7", title:"CocoCay (7:00–5:00)" }
+        ]
+      },
 
-  glance: {
-    dining: [
-      { day:"Day 1", text:"🟨🍽️ Flexible (6:30–?)", tags:["flex"] },
-      { day:"Day 2", text:"🍽️🔒 Booked (6:45–?)", tags:["locked"] },
-      { day:"Day 3", text:"🟨🍽️ Shifted placeholder (7:00–?)", tags:["flex"] },
-      { day:"Day 4", text:"🍽️🔒 Booked (6:45–?)", tags:["locked"] },
-      { day:"Day 5", text:"🍽️🔒 Booked (8:30–?)", tags:["locked"] },
-      { day:"Day 6", text:"🟨🍽️ Flexible (6:30–?)", tags:["flex"] },
-      { day:"Day 7", text:"🟨🍽️ Post-Starburst dining (after ~8:15)", tags:["flex"] }
-    ],
-    ports: [
-      { day:"Day 3", text:"Puerto Costa Maya (8:00–5:00) — Explore" },
-      { day:"Day 4", text:"Roatán (7:00–4:00) — 🧗‍♂️ Zipline 9:00 (meet ~8:30)" },
-      { day:"Day 5", text:"Cozumel (8:00–6:00) — 🛞 ATV + Jade Caverns 10:00 (ready ~9:30)" },
-      { day:"Day 7", text:"CocoCay (7:00–5:00) — Chill day" }
-    ],
-    entertainment: [
-      { day:"Day 1", text:"🎭 Headliner (9:30–10:20) • 🎶 Sing-Along (11:50–12:00) • 🎉 Balloon Drop/DJ (12:00–Late)" },
-      { day:"Day 2", text:"🎤 Adult Comedy (11:30–12:25)" },
-      { day:"Day 3", text:"🎭 Wizard of Oz (4:30–6:10) • 🎤 Adult Comedy (11:30–12:25)" },
-      { day:"Day 4", text:"🎮 Love & Marriage (9:00–10:00)", tags:["priority"] },
-      { day:"Day 5", text:"🎮 Price Is Right (7:00–8:00) • 🎮 Crazy Quest (11:00–11:45)", tags:["priority"] },
-      { day:"Day 6", text:"💦 Aqua Action (10:30–11:30)" },
-      { day:"Day 7", text:"✨ Starburst (7:15–~8:05) • 🎤 Adult Comedy (10:30–11:25)" }
-    ],
-    risk: [
-      { label:"Early mornings", text:"Day 4 (Zipline) • Day 5 (ATV)" },
-      { label:"Late-night risk", text:"Day 1 (past midnight) • Day 3 (comedy ends 12:25 → early excursion)", tags:["risk"] },
-      { label:"High-energy days", text:"Day 4 • Day 5" },
-      { label:"Recovery days", text:"Day 2 • Day 6 • Day 7 (choose chill)" },
-      { label:"Best to book more", text:"Day 2 • Day 6 (Sea Days)" }
-    ]
-  },
+      glance: {
+        dining: [
+          { day:"Day 1", text:"🍽️ My Time Dining (6:30–?)", tags:["flex"] },
+          { day:"Day 2", text:"🍽️ My Time Dining (6:45–?)", tags:["locked"] },
+          { day:"Day 3", text:"🍽️ My Time Dining (7:00–?)", tags:["flex"] },
+          { day:"Day 4", text:"🍽️ My Time Dining (6:45–?)", tags:["locked"] },
+          { day:"Day 5", text:"🍽️ My Time Dining (8:30–?)", tags:["locked"] },
+          { day:"Day 6", text:"🍽️ My Time Dining (6:30–?)", tags:["flex"] },
+          { day:"Day 7", text:"🍽️ Dinner after Starburst (after ~8:15)", tags:["flex"] }
+        ],
+        ports: [
+          { day:"Day 3", text:"Puerto Costa Maya (8:00–5:00) — Explore" },
+          { day:"Day 4", text:"Roatán (7:00–4:00) — Zipline 9:00 (meet ~8:30)" },
+          { day:"Day 5", text:"Cozumel (8:00–6:00) — ATV + Jade Caverns 10:00 (ready ~9:30)" },
+          { day:"Day 7", text:"CocoCay (7:00–5:00) — Chill day" }
+        ],
+        entertainment: [
+          { day:"Day 1", text:"Headliner (9:30–10:20) • Sing-Along (11:50–12:00) • Balloon Drop/DJ (12:00–Late)" },
+          { day:"Day 2", text:"Adult Comedy (11:30–12:25)" },
+          { day:"Day 3", text:"Wizard of Oz (4:30–6:10) • Adult Comedy (11:30–12:25)" },
+          { day:"Day 4", text:"Love & Marriage (9:00–10:00)", tags:["priority"] },
+          { day:"Day 5", text:"Price Is Right (7:00–8:00) • Crazy Quest (11:00–11:45)", tags:["priority"] },
+          { day:"Day 6", text:"Aqua Action (10:30–11:30)" },
+          { day:"Day 7", text:"Starburst (7:15–8:05) • Adult Comedy (10:30–11:25)" }
+        ],
+        risk: [
+          { label:"Early mornings", text:"Day 4 (Zipline) • Day 5 (ATV)" },
+          { label:"Late-night risk", text:"Day 1 (past midnight) • Day 3 (comedy ends 12:25 → early excursion)", tags:["risk"] },
+          { label:"High-energy days", text:"Day 4 • Day 5" },
+          { label:"Recovery days", text:"Day 2 • Day 6 • Day 7 (choose chill)" },
+          { label:"Best nights to book more", text:"Day 2 • Day 6 (Sea Days)" }
+        ],
+        logistics: [
+          { label:"Arrive early rule", text:"Aim to be seated ~10–15 min before shows; meet buffers ~30 min for excursions." },
+          { label:"Venue quick map", text:"Royal Theater (Deck 4 Fwd) • The Attic (Deck 6 Fwd) • Absolute Zero (Deck 6 Aft) • AquaTheater (Deck 15 Fwd) • Promenade (Deck 5 Mid) • Music Hall (Deck 3 Fwd)" },
+          { label:"Safety briefing", text:"Complete mandatory guest safety briefing on Day 1 (as shown in app window).", tags:["priority"] },
+          { label:"Ship time", text:"All times shown are Ship Time." }
+        ]
+      },
 
-  days: {
-    d1: {
-      chips: ["📍 Miami → Sail Away", "🍽️ 🟨 Flexible (6:30–?)", "🧯 Safety briefing required"],
-      events: [
-        { start:"16:30", end:"17:00", title:"🎉 Sail Away Party", venue:"Pool Deck D16" },
-        { start:"18:30", end:null, title:"🟨🍽️ My Time Dining", tags:["flex"] },
-        { start:"21:30", end:"22:20", title:"🎭 Headliner", venue:"Royal Theater D4" },
-        { start:"23:50", end:"24:00", title:"🎶 Sing-Along", venue:"Promenade D5" },
-        { start:"24:00", end:null, title:"🎉 Balloon Drop + DJ", venue:"Promenade D5 / Music Hall D3" }
-      ]
-    },
+      days: {
+        d1: {
+          chips: ["📍 Miami → Sail Away", "🍽️ Dining flexible", "🧯 Safety briefing required"],
+          events: [
+            { start:"16:30", end:"17:00", title:"🎉 Sail Away Party", venue:"Pool Deck (D16)" },
+            { start:"18:30", end:null, title:"🍽️ My Time Dining", tags:["flex"] },
+            { start:"21:30", end:"22:20", title:"🎭 Headliner", venue:"Royal Theater (D4 Fwd)" },
+            { start:"23:50", end:"24:00", title:"🎶 Big Welcome Sing-Along", venue:"Royal Promenade (D5 Mid)" },
+            { start:"24:00", end:null, title:"🎉 Balloon Drop + After Hours DJ", venue:"Promenade (D5 Mid) / Music Hall (D3 Fwd)" }
+          ]
+        },
 
-    d2: {
-      chips: ["🌊 Sea Day", "🍽️🔒 6:45–?"],
-      events: [
-        { start:"18:45", end:null, title:"🍽️🔒 My Time Dining", tags:["locked"] },
-        { start:"23:30", end:"24:25", title:"🎤 Adult Comedy (18+)", venue:"The Attic D6" }
-      ]
-    },
+        d2: {
+          chips: ["🌊 Sea Day", "🍽️ Booked dining"],
+          events: [
+            { start:"18:45", end:null, title:"🍽️ My Time Dining", tags:["locked"] },
+            { start:"23:30", end:"24:25", title:"🎤 Adult Comedy (18+)", venue:"The Attic (D6 Fwd)" }
+          ]
+        },
 
-    d3: {
-      chips: ["🏝️ Puerto Costa Maya (8:00–5:00)", "🟨🍽️ Dining shifted (7:00–?)", "⚠️ Late-night risk"],
-      events: [
-        { start:"08:00", end:"17:00", title:"🏝️ Port day (explore)" },
-        { start:"16:30", end:"18:10", title:"🎭 Wizard of Oz", venue:"Royal Theater D4" },
-        { start:"19:00", end:null, title:"🟨🍽️ My Time Dining", tags:["flex"] },
-        { start:"23:30", end:"24:25", title:"🎤 Adult Comedy (18+)", venue:"The Attic D6", tags:["risk"] }
-      ]
-    },
+        d3: {
+          chips: ["🏝️ Puerto Costa Maya (8:00–5:00)", "🍽️ Dining shifted", "⚠️ Late night risk"],
+          events: [
+            { start:"08:00", end:"17:00", title:"🏝️ Port day (explore)" },
+            { start:"16:30", end:"18:10", title:"🎭 The Wizard of Oz", venue:"Royal Theater (D4 Fwd)" },
+            { start:"19:00", end:null, title:"🍽️ My Time Dining", tags:["flex"] },
+            { start:"23:30", end:"24:25", title:"🎤 Adult Comedy (18+)", venue:"The Attic (D6 Fwd)", tags:["risk"] }
+          ]
+        },
 
-    d4: {
-      chips: ["🏝️ Roatán (7:00–4:00)", "🧗‍♂️ Zipline 9:00 (meet ~8:30)", "🍽️🔒 6:45–?"],
-      events: [
-        { start:"08:30", end:null, title:"⏱️ Be at pickup/meet location" },
-        { start:"09:00", end:null, title:"🧗‍♂️ Zipline Excursion (port)" },
-        { start:"18:45", end:null, title:"🍽️🔒 My Time Dining", tags:["locked"] },
-        { start:"21:00", end:"22:00", title:"🎮 Love & Marriage", venue:"Royal Theater D4", tags:["priority"] }
-      ]
-    },
+        d4: {
+          chips: ["🏝️ Roatán (7:00–4:00)", "🧗 Zipline 9:00 (meet ~8:30)", "🍽️ Booked dining"],
+          events: [
+            { start:"08:30", end:null, title:"⏱️ Meet buffer (excursion)", tags:["priority"] },
+            { start:"09:00", end:null, title:"🧗 Zip & Dip (Excursion)", venue:"Port of Roatán", tags:["priority"] },
+            { start:"18:45", end:null, title:"🍽️ My Time Dining", tags:["locked"] },
+            { start:"21:00", end:"22:00", title:"🎮 Game Show: Love & Marriage", venue:"Royal Theater (D4 Fwd)", tags:["priority"] }
+          ]
+        },
 
-    d5: {
-      chips: ["🏝️ Cozumel (8:00–6:00)", "🛞 ATV 10:00 (ready ~9:30)", "🍽️🔒 8:30–?"],
-      events: [
-        { start:"09:30", end:null, title:"⏱️ Ready/meeting buffer" },
-        { start:"10:00", end:null, title:"🛞 ATV + Jade Caverns Excursion" },
-        { start:"19:00", end:"20:00", title:"🎮 Price Is Right", venue:"Royal Theater D4", tags:["priority"] },
-        { start:"20:30", end:null, title:"🍽️🔒 My Time Dining", tags:["locked"] },
-        { start:"23:00", end:"23:45", title:"🎮 Crazy Quest", venue:"Absolute Zero D6", tags:["priority"] }
-      ]
-    },
+        d5: {
+          chips: ["🏝️ Cozumel (8:00–6:00)", "🛞 ATV 10:00 (ready ~9:30)", "🍽️ Booked dining 8:30"],
+          events: [
+            { start:"09:30", end:null, title:"⏱️ Ready buffer (excursion)", tags:["priority"] },
+            { start:"10:00", end:null, title:"🛞 ATV Ride to Jade Caverns (Excursion)", venue:"Cozumel", tags:["priority"] },
+            { start:"19:00", end:"20:00", title:"🎮 Price Is Right – Everyone’s a Contestant", venue:"Royal Theater (D4 Fwd)", tags:["priority"] },
+            { start:"20:30", end:null, title:"🍽️ My Time Dining", tags:["locked"] },
+            { start:"23:00", end:"23:45", title:"🎮 The Crazy Quest (18+)", venue:"Absolute Zero (D6 Aft)", tags:["priority"] }
+          ]
+        },
 
-    d6: {
-      chips: ["🌊 Sea Day", "🟨🍽️ Flexible (6:30–?)"],
-      events: [
-        { start:"18:30", end:null, title:"🟨🍽️ My Time Dining", tags:["flex"] },
-        { start:"22:30", end:"23:30", title:"💦 Aqua Action", venue:"AquaTheater D15" }
-      ]
-    },
+        d6: {
+          chips: ["🌊 Sea Day", "🍽️ Dining flexible", "💦 Aqua Action booked"],
+          events: [
+            { start:"18:30", end:null, title:"🍽️ My Time Dining", tags:["flex"] },
+            { start:"22:30", end:"23:30", title:"💦 AQUA ACTION!", venue:"AquaTheater (D15 Fwd)", tags:["locked"] }
+          ]
+        },
 
-    d7: {
-      chips: ["🏝️ CocoCay (7:00–5:00)", "✨ Starburst @ 7:15", "🟨🍽️ Dining after Starburst"],
-      events: [
-        { start:"07:00", end:"17:00", title:"🏝️ Island day" },
-        { start:"19:15", end:"20:05", title:"✨ Starburst: Elemental Beauty", venue:"Absolute Zero D6" },
-        { start:"20:15", end:null, title:"🟨🍽️ Dinner (post-Starburst placeholder)", tags:["flex"] },
-        { start:"22:30", end:"23:25", title:"🎤 Adult Comedy (18+)", venue:"Royal Theater D4" }
-      ]
-    }
-  },
+        d7: {
+          chips: ["🏝️ CocoCay (7:00–5:00)", "✨ Starburst 7:15", "🍽️ Dinner after Starburst"],
+          events: [
+            { start:"07:00", end:"17:00", title:"🏝️ Perfect Day at CocoCay" },
+            { start:"19:15", end:"20:05", title:"✨ Starburst: Elemental Beauty", venue:"Absolute Zero (D6 Aft)", tags:["locked"] },
+            { start:"20:15", end:null, title:"🍽️ Dinner (placeholder after Starburst)", tags:["flex"] },
+            { start:"22:30", end:"23:25", title:"🎤 Adult Comedy (18+)", venue:"Royal Theater (D4 Fwd)" }
+          ]
+        }
+      },
 
-  gridSlots: [
-    { label:"4:30–6:10", start:"16:30", end:"18:10" },
-    { label:"6:30–9:30", start:"18:30", end:"21:30" },
-    { label:"7:00–8:00", start:"19:00", end:"20:00" },
-    { label:"8:30–?", start:"20:30", end:null },
-    { label:"9:00–10:00", start:"21:00", end:"22:00" },
-    { label:"9:30–10:20", start:"21:30", end:"22:20" },
-    { label:"10:30–11:30", start:"22:30", end:"23:30" },
-    { label:"11:00–11:45", start:"23:00", end:"23:45" },
-    { label:"11:30–12:25", start:"23:30", end:"24:25" },
-    { label:"11:50–12:00", start:"23:50", end:"24:00" },
-    { label:"12:00–Late", start:"24:00", end:null }
-  ],
+      gridSlots: [
+        { label:"4:30–6:10", start:"16:30", end:"18:10" },
+        { label:"6:30–9:30", start:"18:30", end:"21:30" },
+        { label:"7:00–8:10", start:"19:00", end:"20:10" },
+        { label:"8:15–?",   start:"20:15", end:null },
+        { label:"9:00–10:00", start:"21:00", end:"22:00" },
+        { label:"9:30–10:20", start:"21:30", end:"22:20" },
+        { label:"10:30–11:30", start:"22:30", end:"23:30" },
+        { label:"11:00–11:45", start:"23:00", end:"23:45" },
+        { label:"11:30–12:25", start:"23:30", end:"24:25" },
+        { label:"11:50–12:00", start:"23:50", end:"24:00" },
+        { label:"12:00–Late",  start:"24:00", end:null }
+      ],
 
-  debark: {
-    when:"Jan 31 • 6:00 AM",
-    text:"🧳 Arrive Miami — plan bags/exit timing accordingly"
-  }
-};
+      debark: {
+        when:"Jan 31 • 6:00 AM",
+        text:"🧳 Arrive Miami — plan bags/exit timing accordingly"
+      }
+    };
 
-  </script>
+    /*********************
+     * Helpers
+     *********************/
+    const pad2 = n => String(n).padStart(2,"0");
 
-  <script>
-    // ---------- Helpers ----------
-    function pad2(n){ return String(n).padStart(2,"0"); }
-
-    // Converts "24:00" to minutes (1440). Accepts "HH:MM"
-    function toMins(hhmm){
-      if(!hhmm) return null;
+    function toMin(hhmm){
+      if(hhmm == null) return null;
       const [h,m] = hhmm.split(":").map(Number);
-      return (h*60)+m;
+      return h*60 + m;
     }
-
-    // Converts minutes back to 12h display; handles >= 1440 as next day
     function fmtTime(hhmm){
-      if(!hhmm) return "";
-      const [hRaw, m] = hhmm.split(":").map(Number);
-      let mins = (hRaw*60)+m;
-      mins = mins % 1440;
-      let h = Math.floor(mins/60);
-      const mm = mins % 60;
-      const ampm = h >= 12 ? "PM" : "AM";
-      h = h % 12; if(h === 0) h = 12;
-      return `${h}:${pad2(mm)} ${ampm}`;
+      if(hhmm == null) return "—";
+      const [h,m] = hhmm.split(":").map(Number);
+      if(h === 24 && m === 0) return "12:00a";
+      const ampm = h >= 12 ? "p" : "a";
+      const hh = ((h + 11) % 12) + 1;
+      return `${hh}:${pad2(m)}${ampm}`;
+    }
+    function fmtRange(start,end){
+      if(end == null) return `${fmtTime(start)}–?`;
+      return `${fmtTime(start)}–${fmtTime(end)}`;
     }
 
-    function fmtRange(start, end){
-      if(!start && !end) return "";
-      if(start && !end) return `${fmtTime(start)}–?`;
-      if(start && end) return `${fmtTime(start)}–${fmtTime(end)}`;
-      return "";
+    function tagLabel(tag){
+      if(tag==="locked") return "Booked";
+      if(tag==="flex") return "Flexible";
+      if(tag==="priority") return "Priority";
+      if(tag==="risk") return "Risk";
+      return tag;
     }
 
-    function tagSpan(tag){
-      if(!tag) return "";
-      return `<span class="tag ${tag}">${tag === "priority" ? "PRIORITY" : tag === "locked" ? "Booked" : tag === "flex" ? "Flexible" : tag === "risk" ? "Risk" : tag}</span>`;
+    function renderTagPills(tags){
+      if(!tags || !tags.length) return "";
+      return `<div class="eventtags">${tags.map(t => `<span class="tagpill ${t}">${tagLabel(t)}</span>`).join("")}</div>`;
     }
 
-    function renderGlanceList(el, items, mode){
-      el.innerHTML = items.map(it => {
-        const left = it.day || it.label || "";
-        const tags = (it.tags || []).map(tagSpan).join("");
-        return `
-          <li class="li">
-            <div class="when">${left}</div>
-            <div class="what">${it.text || ""} ${tags}</div>
-          </li>
-        `;
-      }).join("");
-    }
-
-    function sortEvents(events){
-      return [...events].sort((a,b) => (toMins(a.start)||0) - (toMins(b.start)||0));
-    }
-
-    function renderEventLI(ev){
-      const when = fmtRange(ev.start, ev.end);
-      const tags = (ev.tags || []).map(tagSpan).join("");
-      const venue = ev.venue ? `<span class="tag">${ev.venue}</span>` : "";
+    function renderEventLine(ev){
+      const time = fmtRange(ev.start, ev.end);
+      const venue = ev.venue ? `<div class="eventmeta small">${ev.venue}</div>` : "";
+      const tags = renderTagPills(ev.tags);
       return `
-        <li class="li">
-          <div class="when">${when || "—"}</div>
-          <div class="what">${ev.title} ${tags} ${venue}</div>
-        </li>
+        <div class="eventline">
+          <div class="eventtitle">
+            <strong>${ev.title}</strong>
+            <span class="small" style="font-family:var(--mono); color:#cdd6e7">${time}</span>
+          </div>
+          ${venue}
+          ${tags}
+        </div>
       `;
     }
 
-    // Find event(s) whose start falls within the slot, or overlap the slot.
-    function eventsForSlot(dayEvents, slot){
-      const s0 = toMins(slot.start);
-      const s1 = slot.end ? toMins(slot.end) : null;
-
-      return dayEvents.filter(ev => {
-        const e0 = toMins(ev.start);
-        const e1 = ev.end ? toMins(ev.end) : null;
-
-        if(e0 == null) return false;
-        // slot is open-ended: match exact start time
-        if(s1 == null) return e0 === s0;
-        // event has no end: treat as point-in-time, match start inside slot
-        if(e1 == null) return (e0 >= s0 && e0 < s1);
-        // overlap check
-        return (e0 < s1) && (e1 > s0);
-      });
+    function overlaps(slot, ev){
+      const s1 = toMin(slot.start);
+      const e1 = toMin(slot.end) ?? (24*60 + 120); // treat open-ended as late
+      const s2 = toMin(ev.start);
+      const e2 = toMin(ev.end) ?? (24*60 + 120);
+      return (s2 < e1) && (e2 > s1);
     }
 
-    // ---------- Render ----------
-    (function init(){
-      // subtitle
-      document.getElementById("subtitle").textContent = CRUISE_DATA.meta.subtitle;
-
-      // Day buttons + panels
+    /*********************
+     * Render: Today
+     *********************/
+    function renderToday(){
       const daybar = document.getElementById("daybar");
-      const todayPanels = document.getElementById("todayPanels");
+      const todayPanel = document.getElementById("todayPanel");
+      daybar.innerHTML = "";
+      todayPanel.innerHTML = "";
 
       CRUISE_DATA.meta.days.forEach((d, idx) => {
         const btn = document.createElement("button");
-        btn.className = "daybtn" + (idx === 0 ? " active" : "");
-        btn.textContent = d.label;
+        btn.className = "daybtn" + (idx===0 ? " active" : "");
         btn.dataset.day = d.id;
+        btn.textContent = d.label;
         daybar.appendChild(btn);
 
-        const panel = document.createElement("div");
-        panel.className = "daypanel" + (idx === 0 ? " active" : "");
-        panel.id = d.id;
+        const dayObj = CRUISE_DATA.days[d.id];
+        const chips = (dayObj.chips||[]).map(c => `<span class="chip">${c}</span>`).join("");
+        const events = (dayObj.events||[]).map(ev => `
+          <li class="li">
+            <div class="when">${fmtRange(ev.start, ev.end)}</div>
+            <div class="what">
+              ${ev.title}
+              ${ev.venue ? `<div class="small">${ev.venue}</div>` : ""}
+              ${renderTagPills(ev.tags)}
+            </div>
+          </li>
+        `).join("");
 
-        const dayData = CRUISE_DATA.days[d.id];
-        const chips = (dayData?.chips || []).map(c => `<span class="chip">${c}</span>`).join("");
-        const evs = sortEvents(dayData?.events || []);
+        const panel = document.createElement("div");
+        panel.className = "daypanel" + (idx===0 ? " active" : "");
+        panel.id = d.id;
         panel.innerHTML = `
           <div class="kv">${chips}</div>
-          <ul class="list">${evs.map(renderEventLI).join("")}</ul>
+          <ul class="list">${events || `<li class="li"><div class="what muted">No events listed.</div></li>`}</ul>
         `;
-        todayPanels.appendChild(panel);
+        todayPanel.appendChild(panel);
       });
 
-      // Day switching
-      const buttons = Array.from(document.querySelectorAll('.daybtn'));
-      const panels  = Array.from(document.querySelectorAll('.daypanel'));
+      // hook day switching
+      const buttons = Array.from(document.querySelectorAll(".daybtn"));
+      const panels = Array.from(document.querySelectorAll(".daypanel"));
       function setDay(id){
-        buttons.forEach(b => b.classList.toggle('active', b.dataset.day === id));
-        panels.forEach(p => p.classList.toggle('active', p.id === id));
-        history.replaceState(null, '', '#today');
+        buttons.forEach(b => b.classList.toggle("active", b.dataset.day === id));
+        panels.forEach(p => p.classList.toggle("active", p.id === id));
+        history.replaceState(null, "", "#today");
       }
-      buttons.forEach(b => b.addEventListener('click', () => setDay(b.dataset.day)));
+      buttons.forEach(b => b.addEventListener("click", () => setDay(b.dataset.day)));
+    }
 
-      // At-a-glance lists
-      renderGlanceList(document.getElementById("glanceEntertainment"), CRUISE_DATA.glance.entertainment);
-      renderGlanceList(document.getElementById("glancePorts"), CRUISE_DATA.glance.ports);
-      renderGlanceList(document.getElementById("glanceDining"), CRUISE_DATA.glance.dining);
-      renderGlanceList(document.getElementById("glanceRisk"), CRUISE_DATA.glance.risk);
+    /*********************
+     * Render: At-a-glance cards
+     *********************/
+    function renderGlance(){
+      const top = document.getElementById("glanceTop");
+      const bottom = document.getElementById("glanceBottom");
 
-      // Grid header
-      const gridHead = document.getElementById("gridHead");
-      gridHead.innerHTML = `
-        <th>Time Block</th>
-        ${CRUISE_DATA.meta.days.map(d => `<th>${d.label}</th>`).join("")}
+      const makeList = (items, mode="dayText") => {
+        if(mode==="dayText"){
+          return `<ul class="list">${items.map(it => `
+            <li class="li">
+              <div class="when">${it.day}</div>
+              <div class="what">
+                ${it.text}
+                ${renderTagPills(it.tags)}
+              </div>
+            </li>
+          `).join("")}</ul>`;
+        }
+        // label/text
+        return `<ul class="list">${items.map(it => `
+          <li class="li">
+            <div class="when">${it.label}</div>
+            <div class="what">
+              ${it.text}
+              ${renderTagPills(it.tags)}
+            </div>
+          </li>
+        `).join("")}</ul>`;
+      };
+
+      top.innerHTML = `
+        <div class="card">
+          <h3>🎭 Entertainment</h3>
+          ${makeList(CRUISE_DATA.glance.entertainment, "dayText")}
+        </div>
+        <div class="card">
+          <h3>🏝️ Ports & Excursions</h3>
+          ${makeList(CRUISE_DATA.glance.ports, "dayText")}
+        </div>
       `;
 
-      // Grid body
-      const gridBody = document.getElementById("gridBody");
-      const dayIds = CRUISE_DATA.meta.days.map(d => d.id);
+      bottom.innerHTML = `
+        <div class="card">
+          <h3>🍽️ Dining</h3>
+          ${makeList(CRUISE_DATA.glance.dining, "dayText")}
+        </div>
+        <div class="card">
+          <h3>⚠️ Risk & Energy</h3>
+          ${makeList(CRUISE_DATA.glance.risk, "labelText")}
+        </div>
+        <div class="card" style="grid-column: 1 / -1;">
+          <h3>🧭 Logistics</h3>
+          ${makeList(CRUISE_DATA.glance.logistics, "labelText")}
+        </div>
+      `;
+    }
 
-      gridBody.innerHTML = CRUISE_DATA.gridSlots.map(slot => {
-        const tds = dayIds.map(id => {
-          const dayEvents = CRUISE_DATA.days[id]?.events || [];
-          const hits = eventsForSlot(dayEvents, slot);
-          if(!hits.length) return `<td class="cell-muted">—</td>`;
+    /*********************
+     * Render: Visual grid
+     * - Uses the same tags as everywhere else (Booked/Flexible/etc. pills)
+     * - No yellow-square emoji. Status is derived from tags.
+     *********************/
+    function renderGrid(){
+      const wrap = document.getElementById("gridTable");
+      const days = CRUISE_DATA.meta.days;
 
-          // If multiple events overlap the same slot, list them stacked
-          const content = hits
-            .sort((a,b)=> (toMins(a.start)||0)-(toMins(b.start)||0))
-            .map(ev => {
-              const range = `(${fmtRange(ev.start, ev.end)})`;
-              const venue = ev.venue ? `<div class="small">📍${ev.venue}</div>` : "";
-              // Title already includes emoji; keep it clean
-              return `<div>${ev.title} ${range}${venue}</div>`;
-            })
-            .join("<div style='height:8px'></div>");
-          return `<td>${content}</td>`;
+      let thead = `
+        <thead>
+          <tr>
+            <th>Time Block</th>
+            ${days.map(d => `<th>${d.label}<div class="small">${d.title}</div></th>`).join("")}
+          </tr>
+        </thead>
+      `;
+
+      let rows = CRUISE_DATA.gridSlots.map(slot => {
+        const tds = days.map(d => {
+          const events = (CRUISE_DATA.days[d.id]?.events || []).filter(ev => overlaps(slot, ev));
+          if(!events.length) return `<td class="cell-muted">—</td>`;
+          return `<td>${events.map(renderEventLine).join("")}</td>`;
         }).join("");
-
         return `<tr><td>${slot.label}</td>${tds}</tr>`;
       }).join("");
 
-      // Full day-by-day cards (plus debark)
-      const dayCards = document.getElementById("dayCards");
-      const cards = CRUISE_DATA.meta.days.map(d => {
-        const dayData = CRUISE_DATA.days[d.id];
-        const evs = sortEvents(dayData?.events || []);
+      wrap.innerHTML = `<table aria-label="Visual schedule grid">${thead}<tbody>${rows}</tbody></table>`;
+    }
+
+    /*********************
+     * Render: Full day-by-day
+     *********************/
+    function renderAllDays(){
+      const el = document.getElementById("allDays");
+      const dayCards = CRUISE_DATA.meta.days.map(d => {
+        const dayObj = CRUISE_DATA.days[d.id];
+        const chips = (dayObj.chips||[]).map(c => `<span class="chip">${c}</span>`).join("");
+        const events = (dayObj.events||[]).map(ev => `
+          <li class="li">
+            <div class="when">${fmtRange(ev.start, ev.end)}</div>
+            <div class="what">
+              ${ev.title}
+              ${ev.venue ? `<div class="small">${ev.venue}</div>` : ""}
+              ${renderTagPills(ev.tags)}
+            </div>
+          </li>
+        `).join("");
+
         return `
           <div class="card">
             <h3>${d.label} – ${d.title}</h3>
-            <ul class="list">${evs.map(renderEventLI).join("")}</ul>
+            <div class="kv">${chips}</div>
+            <ul class="list">${events || `<li class="li"><div class="what muted">No events listed.</div></li>`}</ul>
           </div>
         `;
-      });
+      }).join("");
 
-      cards.push(`
+      const debark = `
         <div class="card">
           <h3>🧳 Debarkation</h3>
           <ul class="list">
@@ -605,10 +668,22 @@
             </li>
           </ul>
         </div>
-      `);
+      `;
 
-      dayCards.innerHTML = cards.join("");
-    })();
+      el.innerHTML = dayCards + debark;
+    }
+
+    /*********************
+     * Boot
+     *********************/
+    function boot(){
+      document.getElementById("subtitle").textContent = CRUISE_DATA.meta.subtitle || "";
+      renderToday();
+      renderGlance();
+      renderGrid();
+      renderAllDays();
+    }
+    boot();
   </script>
 </body>
 </html>
