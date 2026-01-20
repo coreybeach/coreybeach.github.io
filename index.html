@@ -89,7 +89,6 @@
     .muted{color:var(--muted)}
     .small{font-size:12px; color: var(--muted)}
 
-    /* Day selector */
     .daybar{
       display:flex; gap:8px; overflow:auto; padding-bottom:6px;
       -webkit-overflow-scrolling: touch;
@@ -102,7 +101,7 @@
       border-radius: 14px;
       border: 1px solid var(--border);
       background: rgba(16,26,46,.75);
-      color: #ffffff; /* readable */
+      color: #ffffff;
       font-weight: 800;
       font-size: 13px;
       cursor: pointer;
@@ -125,7 +124,7 @@
     .daypanel{display:none}
     .daypanel.active{display:block}
 
-    /* Tag pills – priority is RED (per request) */
+    /* Tag pills – Priority = RED */
     .eventtags{margin-top:8px; display:flex; gap:8px; flex-wrap:wrap}
     .tagpill{
       display:inline-flex;
@@ -151,17 +150,16 @@
       border: 1px solid rgba(245,158,11,.35);
     }
     .tagpill.priority{
-      background: rgba(239,68,68,.18);   /* red */
+      background: rgba(239,68,68,.18);
       color: #ef4444;
       border: 1px solid rgba(239,68,68,.35);
     }
     .tagpill.risk{
-      background: rgba(244,63,94,.18);   /* rose */
+      background: rgba(244,63,94,.18);
       color: #fb7185;
       border: 1px solid rgba(244,63,94,.35);
     }
 
-    /* Grid table */
     .table-wrap{
       overflow:auto;
       border-radius: var(--radius);
@@ -197,7 +195,6 @@
     tr:last-child td{border-bottom:none}
     td:last-child, th:last-child{border-right:none}
 
-    /* Grid cell event styling (cleaner like "before") */
     td .eventline{margin:0 0 12px}
     td .eventline:last-child{margin-bottom:0}
     td .eventtitle{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
@@ -262,7 +259,7 @@
     <section id="grid">
       <div class="section-head">
         <h2>🗓️ Visual grid</h2>
-        <div class="note">Single-placement grid (events appear once based on start time).</div>
+        <div class="note">Standardized blocks • single-placement by start time.</div>
       </div>
       <div class="table-wrap" id="gridTable"></div>
     </section>
@@ -286,8 +283,7 @@
 1) Update times by editing: days.dX.events[].start/end (24h "HH:MM", use "24:00" for midnight)
 2) Status uses tags: ["locked"] (Booked) / ["flex"] (Flexible) / ["priority"] (RED) / ["risk"]
 3) Keep end:null if the real end is unknown (shows “–?” in lists)
-4) Use grid_mins to control grid placement for open-ended items (prevents repeating):
-   Example: { start:"18:30", end:null, grid_mins:75, tags:["flex"] }
+4) Use grid_mins to control grid placement for open-ended items (prevents repeating)
         </div>
       </div>
     </section>
@@ -425,16 +421,13 @@
         }
       },
 
-      /* NEW: Non-overlapping time blocks for a clean "old look".
-         NOTE: This grid is evening-focused; morning excursions won't appear here.
-         (If you want a separate "Morning grid", we can add one.) */
+      /* Standardized night blocks */
       gridSlots: [
-        { label:"4:30–6:10",   start:"16:30", end:"18:10" },
-        { label:"6:30–7:59",   start:"18:30", end:"19:59" },
-        { label:"8:00–9:14",   start:"20:00", end:"21:14" },
-        { label:"9:15–10:29",  start:"21:15", end:"22:29" },
-        { label:"10:30–11:29", start:"22:30", end:"23:29" },
-        { label:"11:30–12:25", start:"23:30", end:"24:25" },
+        { label:"4:30–6:00",   start:"16:30", end:"18:00" },
+        { label:"6:00–7:30",   start:"18:00", end:"19:30" },
+        { label:"7:30–9:00",   start:"19:30", end:"21:00" },
+        { label:"9:00–10:30",  start:"21:00", end:"22:30" },
+        { label:"10:30–12:00", start:"22:30", end:"24:00" },
         { label:"12:00–Late",  start:"24:00", end:null }
       ],
 
@@ -496,11 +489,7 @@
       `;
     }
 
-    /*********************
-     * Grid placement logic (single-placement by START TIME)
-     * - event goes into the ONE slot that contains its start time
-     * - open-ended does not spill into every later slot
-     *********************/
+    /* Single-placement by START TIME */
     function startInSlot(slot, ev){
       const s = toMin(ev.start);
       if(s == null) return false;
@@ -511,9 +500,6 @@
       return (s >= slotStart) && (s < slotEnd);
     }
 
-    /*********************
-     * Render: Today
-     *********************/
     function renderToday(){
       const daybar = document.getElementById("daybar");
       const todayPanel = document.getElementById("todayPanel");
@@ -560,9 +546,6 @@
       buttons.forEach(b => b.addEventListener("click", () => setDay(b.dataset.day)));
     }
 
-    /*********************
-     * Render: At-a-glance cards
-     *********************/
     function renderGlance(){
       const top = document.getElementById("glanceTop");
       const bottom = document.getElementById("glanceBottom");
@@ -617,9 +600,6 @@
       `;
     }
 
-    /*********************
-     * Render: Visual grid (single-placement)
-     *********************/
     function renderGrid(){
       const wrap = document.getElementById("gridTable");
       const days = CRUISE_DATA.meta.days;
@@ -649,9 +629,6 @@
       wrap.innerHTML = `<table aria-label="Visual schedule grid">${thead}<tbody>${rows}</tbody></table>`;
     }
 
-    /*********************
-     * Render: Full day-by-day
-     *********************/
     function renderAllDays(){
       const el = document.getElementById("allDays");
       const dayCards = CRUISE_DATA.meta.days.map(d => {
