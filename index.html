@@ -14,7 +14,6 @@
       --border:rgba(255,255,255,.08);
       --shadow:0 10px 30px rgba(0,0,0,.35);
       --radius:16px;
-
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
     }
 
@@ -103,8 +102,8 @@
       border-radius: 14px;
       border: 1px solid var(--border);
       background: rgba(16,26,46,.75);
-      color: #ffffff; /* FIX: ensure day labels are readable */
-      font-weight: 700;
+      color: #ffffff; /* readable */
+      font-weight: 800;
       font-size: 13px;
       cursor: pointer;
       user-select: none;
@@ -126,7 +125,7 @@
     .daypanel{display:none}
     .daypanel.active{display:block}
 
-    /* Tag pills – color fixes + match your screenshot vibe */
+    /* Tag pills – priority is RED (per request) */
     .eventtags{margin-top:8px; display:flex; gap:8px; flex-wrap:wrap}
     .tagpill{
       display:inline-flex;
@@ -139,7 +138,7 @@
       background: rgba(255,255,255,.03);
       color: var(--text);
       white-space:nowrap;
-      font-weight:700;
+      font-weight:800;
     }
     .tagpill.locked{
       background: rgba(16,185,129,.18);
@@ -152,14 +151,14 @@
       border: 1px solid rgba(245,158,11,.35);
     }
     .tagpill.priority{
-      background: rgba(59,130,246,.18);
-      color: #3b82f6;
-      border: 1px solid rgba(59,130,246,.35);
-    }
-    .tagpill.risk{
-      background: rgba(239,68,68,.18);
+      background: rgba(239,68,68,.18);   /* red */
       color: #ef4444;
       border: 1px solid rgba(239,68,68,.35);
+    }
+    .tagpill.risk{
+      background: rgba(244,63,94,.18);   /* rose */
+      color: #fb7185;
+      border: 1px solid rgba(244,63,94,.35);
     }
 
     /* Grid table */
@@ -197,12 +196,15 @@
     }
     tr:last-child td{border-bottom:none}
     td:last-child, th:last-child{border-right:none}
-    td .eventline{margin:0 0 10px}
+
+    /* Grid cell event styling (cleaner like "before") */
+    td .eventline{margin:0 0 12px}
     td .eventline:last-child{margin-bottom:0}
     td .eventtitle{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
-    td .eventtitle strong{font-weight:650}
+    td .eventtitle strong{font-weight:750}
     td .eventmeta{margin-top:3px}
     .cell-muted{color: var(--muted)}
+
     .footer{margin-top:18px; color: var(--muted); font-size:12px; text-align:center;}
     .codehint{
       font-family: var(--mono);
@@ -260,7 +262,7 @@
     <section id="grid">
       <div class="section-head">
         <h2>🗓️ Visual grid</h2>
-        <div class="note">Scroll horizontally on phone • sticky headers + time column.</div>
+        <div class="note">Single-placement grid (events appear once based on start time).</div>
       </div>
       <div class="table-wrap" id="gridTable"></div>
     </section>
@@ -282,9 +284,9 @@
         <h3>Common edits</h3>
         <div class="codehint">
 1) Update times by editing: days.dX.events[].start/end (24h "HH:MM", use "24:00" for midnight)
-2) Status uses tags: ["locked"] (Booked) / ["flex"] (Flexible) / ["priority"] / ["risk"]
-3) For open-ended items, keep end:null so it displays "–?" in lists,
-   but use grid_mins to control grid placement (prevents repeating in every block).
+2) Status uses tags: ["locked"] (Booked) / ["flex"] (Flexible) / ["priority"] (RED) / ["risk"]
+3) Keep end:null if the real end is unknown (shows “–?” in lists)
+4) Use grid_mins to control grid placement for open-ended items (prevents repeating):
    Example: { start:"18:30", end:null, grid_mins:75, tags:["flex"] }
         </div>
       </div>
@@ -333,10 +335,10 @@
           { day:"Day 1", text:"Headliner (9:30–10:20) • Sing-Along (11:50–12:00) • Balloon Drop/DJ (12:00–Late)" },
           { day:"Day 2", text:"Adult Comedy (11:30–12:25)" },
           { day:"Day 3", text:"Wizard of Oz (4:30–6:10) • Adult Comedy (11:30–12:25)" },
-          { day:"Day 4", text:"Love & Marriage (9:00–10:00)", tags:["priority"] },
+          { day:"Day 4", text:"Game Show: Love & Marriage (9:00–10:00)", tags:["priority"] },
           { day:"Day 5", text:"Price Is Right (7:00–8:00) • Crazy Quest (11:00–11:45)", tags:["priority"] },
           { day:"Day 6", text:"Aqua Action (10:30–11:30)", tags:["locked"] },
-          { day:"Day 7", text:"Starburst (7:15–8:05) • Adult Comedy (10:30–11:25)", tags:["locked"] }
+          { day:"Day 7", text:"Starburst (7:15–8:05) • Adult Comedy (10:30–11:25)" }
         ],
         risk: [
           { label:"Early mornings", text:"Day 4 (Zipline) • Day 5 (ATV)" },
@@ -423,19 +425,16 @@
         }
       },
 
-      /* Evening-focused grid blocks. Because dining is open-ended, we use grid_mins
-         so it only shows in ONE block instead of all blocks. */
+      /* NEW: Non-overlapping time blocks for a clean "old look".
+         NOTE: This grid is evening-focused; morning excursions won't appear here.
+         (If you want a separate "Morning grid", we can add one.) */
       gridSlots: [
-        { label:"4:30–6:10", start:"16:30", end:"18:10" },
-        { label:"6:30–9:30", start:"18:30", end:"21:30" },
-        { label:"7:00–8:10", start:"19:00", end:"20:10" },
-        { label:"8:15–?",   start:"20:15", end:null },
-        { label:"9:00–10:00", start:"21:00", end:"22:00" },
-        { label:"9:30–10:20", start:"21:30", end:"22:20" },
-        { label:"10:30–11:30", start:"22:30", end:"23:30" },
-        { label:"11:00–11:45", start:"23:00", end:"23:45" },
+        { label:"4:30–6:10",   start:"16:30", end:"18:10" },
+        { label:"6:30–7:59",   start:"18:30", end:"19:59" },
+        { label:"8:00–9:14",   start:"20:00", end:"21:14" },
+        { label:"9:15–10:29",  start:"21:15", end:"22:29" },
+        { label:"10:30–11:29", start:"22:30", end:"23:29" },
         { label:"11:30–12:25", start:"23:30", end:"24:25" },
-        { label:"11:50–12:00", start:"23:50", end:"24:00" },
         { label:"12:00–Late",  start:"24:00", end:null }
       ],
 
@@ -497,35 +496,19 @@
       `;
     }
 
-    /* FIX: Open-ended events (end:null) no longer spill into every grid block.
-       Use grid_mins when present; otherwise short defaults. */
-    function isDiningEvent(ev){
-      const t = (ev.title || "").toLowerCase();
-      return t.includes("dining") || t.includes("dinner");
-    }
+    /*********************
+     * Grid placement logic (single-placement by START TIME)
+     * - event goes into the ONE slot that contains its start time
+     * - open-ended does not spill into every later slot
+     *********************/
+    function startInSlot(slot, ev){
+      const s = toMin(ev.start);
+      if(s == null) return false;
 
-    function eventEndForGrid(ev){
-      const start = toMin(ev.start);
-      if(start == null) return null;
+      const slotStart = toMin(slot.start);
+      const slotEnd = (slot.end == null) ? (24*60 + 120) : toMin(slot.end);
 
-      if(ev.end) return toMin(ev.end);
-
-      if(Number.isFinite(ev.grid_mins)) return start + ev.grid_mins;
-
-      if(isDiningEvent(ev)) return start + 75; // show dining once by default
-
-      return start + 60; // default for other open-ended events
-    }
-
-    function overlaps(slot, ev){
-      const s1 = toMin(slot.start);
-      const e1 = toMin(slot.end) ?? (24*60 + 120);
-
-      const s2 = toMin(ev.start);
-      const e2 = eventEndForGrid(ev);
-
-      if(s2 == null || e2 == null) return false;
-      return (s2 < e1) && (e2 > s1);
+      return (s >= slotStart) && (s < slotEnd);
     }
 
     /*********************
@@ -635,13 +618,13 @@
     }
 
     /*********************
-     * Render: Visual grid
+     * Render: Visual grid (single-placement)
      *********************/
     function renderGrid(){
       const wrap = document.getElementById("gridTable");
       const days = CRUISE_DATA.meta.days;
 
-      let thead = `
+      const thead = `
         <thead>
           <tr>
             <th>Time Block</th>
@@ -650,12 +633,16 @@
         </thead>
       `;
 
-      let rows = CRUISE_DATA.gridSlots.map(slot => {
+      const rows = CRUISE_DATA.gridSlots.map(slot => {
         const tds = days.map(d => {
-          const events = (CRUISE_DATA.days[d.id]?.events || []).filter(ev => overlaps(slot, ev));
+          const events = (CRUISE_DATA.days[d.id]?.events || [])
+            .filter(ev => startInSlot(slot, ev))
+            .sort((a,b) => (toMin(a.start) ?? 0) - (toMin(b.start) ?? 0));
+
           if(!events.length) return `<td class="cell-muted">—</td>`;
           return `<td>${events.map(renderEventLine).join("")}</td>`;
         }).join("");
+
         return `<tr><td>${slot.label}</td>${tds}</tr>`;
       }).join("");
 
