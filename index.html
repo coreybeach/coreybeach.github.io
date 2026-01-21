@@ -82,13 +82,39 @@
       background: rgba(255,255,255,.03);
     }
 
+    /* Filters */
+    .filters{
+      display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;
+    }
+    .toggle{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(16,26,46,.65);
+      cursor:pointer;
+      user-select:none;
+      font-size:13px;
+    }
+    .toggle input{accent-color:#60a5fa}
+    .toggle small{color:var(--muted)}
+
     .list{margin:10px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px;}
     .li{padding:10px 10px; border-radius: 12px; background: rgba(255,255,255,.03); border:1px solid var(--border);}
     .li .when{font-family:var(--mono); color:#cdd6e7; font-size:12px}
     .li .what{margin-top:2px}
     .muted{color:var(--muted)}
     .small{font-size:12px; color: var(--muted)}
+    .warn{margin-top:8px; display:flex; flex-direction:column; gap:6px}
+    .warnline{
+      font-size:12px;
+      color:#fca5a5;
+      background: rgba(239,68,68,.10);
+      border: 1px solid rgba(239,68,68,.25);
+      border-radius: 10px;
+      padding:6px 8px;
+    }
 
+    /* Day selector */
     .daybar{
       display:flex; gap:8px; overflow:auto; padding-bottom:6px;
       -webkit-overflow-scrolling: touch;
@@ -120,11 +146,10 @@
       border-color: rgba(96,165,250,.6);
       box-shadow: 0 0 0 2px rgba(96,165,250,.25) inset;
     }
-
     .daypanel{display:none}
     .daypanel.active{display:block}
 
-    /* Tag pills – Priority = RED */
+    /* Tag pills – Priority = RED (you asked) */
     .eventtags{margin-top:8px; display:flex; gap:8px; flex-wrap:wrap}
     .tagpill{
       display:inline-flex;
@@ -160,11 +185,13 @@
       border: 1px solid rgba(244,63,94,.35);
     }
 
+    /* Grid tables */
     .table-wrap{
       overflow:auto;
       border-radius: var(--radius);
       border:1px solid var(--border);
       background: rgba(16,26,46,.55);
+      margin-bottom:12px;
     }
     table{ width:100%; border-collapse:collapse; min-width:980px; }
     th, td{
@@ -190,10 +217,44 @@
       font-family: var(--mono);
       font-size:12px;
       color:#cdd6e7;
-      width:130px;
+      width:140px;
     }
     tr:last-child td{border-bottom:none}
     td:last-child, th:last-child{border-right:none}
+
+    .colhead-title{font-weight:800; color:#e5e7eb; font-size:13px; margin-bottom:4px}
+    .colhead-sub{font-size:12px; color:var(--muted)}
+    .colhead-summary{
+      margin-top:8px;
+      display:flex; flex-wrap:wrap; gap:6px;
+    }
+    .mini{
+      font-size:11px;
+      padding:5px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color:#dbe3f3;
+      white-space:nowrap;
+    }
+    .mini.booked{border-color: rgba(16,185,129,.35); background: rgba(16,185,129,.12); color:#7dffcf}
+    .mini.flex{border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.12); color:#ffd68a}
+    .mini.priority{border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.12); color:#ff9b9b}
+
+    /* Dining band in header (always visible, even if dining hidden in grid) */
+    .band{
+      margin-top:8px;
+      padding:8px 10px;
+      border-radius: 12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color:#dbe3f3;
+      font-size:12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+    }
 
     td .eventline{margin:0 0 12px}
     td .eventline:last-child{margin-bottom:0}
@@ -226,7 +287,7 @@
       <nav class="nav">
         <a class="pilllink accent" href="#today">Today</a>
         <a class="pilllink" href="#glance">At-a-glance</a>
-        <a class="pilllink" href="#grid">Visual grid</a>
+        <a class="pilllink" href="#grid">Visual grids</a>
         <a class="pilllink" href="#days">Days</a>
         <a class="pilllink" href="#edit">Edit tips</a>
       </nav>
@@ -237,11 +298,14 @@
     <section id="today">
       <div class="section-head">
         <h2>📌 Today (tap a day below)</h2>
-        <div class="note">Tip: Add to Home Screen for 1-tap access.</div>
+        <div class="note">Filters apply everywhere.</div>
       </div>
 
       <div class="card">
         <div class="daybar" id="daybar"></div>
+
+        <div class="filters" id="filters"></div>
+
         <div class="timeline" id="todayPanel"></div>
       </div>
     </section>
@@ -249,7 +313,7 @@
     <section id="glance">
       <div class="section-head">
         <h2>👀 At-a-glance</h2>
-        <div class="note">Fast decisions without scrolling a full timeline.</div>
+        <div class="note">Fast decisions without scrolling.</div>
       </div>
 
       <div class="grid two" id="glanceTop"></div>
@@ -258,16 +322,23 @@
 
     <section id="grid">
       <div class="section-head">
-        <h2>🗓️ Visual grid</h2>
-        <div class="note">Standardized blocks • single-placement by start time.</div>
+        <h2>🗓️ Visual grids</h2>
+        <div class="note">Morning/Port + Evening/Shows • standardized blocks • single-placement by start time.</div>
       </div>
-      <div class="table-wrap" id="gridTable"></div>
+
+      <div class="card">
+        <h3 style="margin-bottom:10px;">🌅 Morning / Port grid</h3>
+        <div class="table-wrap" id="gridTableMorning"></div>
+
+        <h3 style="margin:14px 0 10px;">🌙 Evening / Shows grid</h3>
+        <div class="table-wrap" id="gridTableEvening"></div>
+      </div>
     </section>
 
     <section id="days">
       <div class="section-head">
         <h2>📅 Full day-by-day</h2>
-        <div class="note">Same data as Today + Grid, but all visible at once.</div>
+        <div class="note">Includes auto conflict + travel buffer warnings.</div>
       </div>
       <div class="grid two" id="allDays"></div>
     </section>
@@ -275,15 +346,16 @@
     <section id="edit">
       <div class="section-head">
         <h2>🛠️ Easy edits</h2>
-        <div class="note">Change only the data block below (no HTML/CSS changes needed).</div>
+        <div class="note">Change only the data block (no HTML/CSS changes needed).</div>
       </div>
       <div class="card">
-        <h3>Common edits</h3>
+        <h3>How to edit</h3>
         <div class="codehint">
-1) Update times by editing: days.dX.events[].start/end (24h "HH:MM", use "24:00" for midnight)
-2) Status uses tags: ["locked"] (Booked) / ["flex"] (Flexible) / ["priority"] (RED) / ["risk"]
-3) Keep end:null if the real end is unknown (shows “–?” in lists)
-4) Use grid_mins to control grid placement for open-ended items (prevents repeating)
+1) Update times in: days.dX.events[].start/end (24h "HH:MM", use "24:00" for midnight)
+2) Categories: "port" | "excursion" | "dining" | "entertainment" | "logistics"
+3) Tags: ["locked"] (Booked) / ["flex"] (Flexible) / ["priority"] (RED) / ["risk"]
+4) For open-ended items, set end:null and optionally grid_mins (default 75)
+5) Dining in grid: controlled by the "Dining in grids" filter (default OFF); dining still shows in Today + At-a-glance header band.
         </div>
       </div>
     </section>
@@ -310,6 +382,24 @@
           { id:"d7", label:"Day 7", title:"CocoCay (7:00–5:00)" }
         ]
       },
+
+      // Standardized blocks (morning + evening)
+      gridSlotsMorning: [
+        { label:"7:00–8:30",   start:"07:00", end:"08:30" },
+        { label:"8:30–10:00",  start:"08:30", end:"10:00" },
+        { label:"10:00–11:30", start:"10:00", end:"11:30" },
+        { label:"11:30–1:00",  start:"11:30", end:"13:00" },
+        { label:"1:00–3:00",   start:"13:00", end:"15:00" },
+        { label:"3:00–4:30",   start:"15:00", end:"16:30" }
+      ],
+      gridSlotsEvening: [
+        { label:"4:30–6:00",   start:"16:30", end:"18:00" },
+        { label:"6:00–7:30",   start:"18:00", end:"19:30" },
+        { label:"7:30–9:00",   start:"19:30", end:"21:00" },
+        { label:"9:00–10:30",  start:"21:00", end:"22:30" },
+        { label:"10:30–12:00", start:"22:30", end:"24:00" },
+        { label:"12:00–Late",  start:"24:00", end:null }
+      ],
 
       glance: {
         dining: [
@@ -355,86 +445,90 @@
         d1: {
           chips: ["📍 Miami → Sail Away", "🍽️ Dining flexible", "🧯 Safety briefing required"],
           events: [
-            { start:"16:30", end:"17:00", title:"🎉 Sail Away Party", venue:"Pool Deck (D16)" },
-            { start:"18:30", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["flex"] },
-            { start:"21:30", end:"22:20", title:"🎭 Headliner", venue:"Royal Theater (D4 Fwd)" },
-            { start:"23:50", end:"24:00", title:"🎶 Big Welcome Sing-Along", venue:"Royal Promenade (D5 Mid)" },
-            { start:"24:00", end:null, grid_mins:60, title:"🎉 Balloon Drop + After Hours DJ", venue:"Promenade (D5 Mid) / Music Hall (D3 Fwd)" }
+            { start:"16:30", end:"17:00", title:"🎉 Sail Away Party", venue:"Pool Deck (D16)", category:"entertainment" },
+            { start:"18:30", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["flex"], category:"dining" },
+            { start:"21:30", end:"22:20", title:"🎭 Headliner", venue:"Royal Theater (D4 Fwd)", category:"entertainment" },
+            { start:"23:50", end:"24:00", title:"🎶 Big Welcome Sing-Along", venue:"Royal Promenade (D5 Mid)", category:"entertainment" },
+            { start:"24:00", end:null, grid_mins:90, title:"🎉 Balloon Drop + After Hours DJ", venue:"Promenade (D5 Mid) / Music Hall (D3 Fwd)", category:"entertainment" }
           ]
         },
 
         d2: {
           chips: ["🌊 Sea Day", "🍽️ Booked dining"],
           events: [
-            { start:"18:45", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["locked"] },
-            { start:"23:30", end:"24:25", title:"🎤 Adult Comedy (18+)", venue:"The Attic (D6 Fwd)" }
+            { start:"18:45", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["locked"], category:"dining" },
+            { start:"23:30", end:"24:25", title:"🎤 Adult Comedy (18+)", venue:"The Attic (D6 Fwd)", category:"entertainment" }
           ]
         },
 
         d3: {
           chips: ["🏝️ Puerto Costa Maya (8:00–5:00)", "🍽️ Dining shifted", "⚠️ Late night risk"],
           events: [
-            { start:"08:00", end:"17:00", title:"🏝️ Port day (explore)" },
-            { start:"16:30", end:"18:10", title:"🎭 The Wizard of Oz", venue:"Royal Theater (D4 Fwd)" },
-            { start:"19:00", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["flex"] },
-            { start:"23:30", end:"24:25", title:"🎤 Adult Comedy (18+)", venue:"The Attic (D6 Fwd)", tags:["risk"] }
+            { start:"08:00", end:"17:00", title:"🏝️ Port day (explore)", category:"port" },
+            { start:"16:30", end:"18:10", title:"🎭 The Wizard of Oz", venue:"Royal Theater (D4 Fwd)", category:"entertainment" },
+            { start:"19:00", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["flex"], category:"dining" },
+            { start:"23:30", end:"24:25", title:"🎤 Adult Comedy (18+)", venue:"The Attic (D6 Fwd)", tags:["risk"], category:"entertainment" }
           ]
         },
 
         d4: {
           chips: ["🏝️ Roatán (7:00–4:00)", "🧗 Zipline 9:00 (meet ~8:30)", "🍽️ Booked dining"],
           events: [
-            { start:"08:30", end:null, grid_mins:30, title:"⏱️ Meet buffer (excursion)", tags:["priority"] },
-            { start:"09:00", end:null, grid_mins:180, title:"🧗 Zip & Dip (Excursion)", venue:"Port of Roatán", tags:["priority"] },
-            { start:"18:45", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["locked"] },
-            { start:"21:00", end:"22:00", title:"🎮 Game Show: Love & Marriage", venue:"Royal Theater (D4 Fwd)", tags:["priority"] }
+            { start:"08:30", end:null, grid_mins:30, title:"⏱️ Meet buffer (excursion)", tags:["priority"], category:"logistics" },
+            { start:"09:00", end:null, grid_mins:180, title:"🧗 Zip & Dip (Excursion)", venue:"Port of Roatán", tags:["priority"], category:"excursion" },
+            { start:"18:45", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["locked"], category:"dining" },
+            { start:"21:00", end:"22:00", title:"🎮 Game Show: Love & Marriage", venue:"Royal Theater (D4 Fwd)", tags:["priority"], category:"entertainment" }
           ]
         },
 
         d5: {
           chips: ["🏝️ Cozumel (8:00–6:00)", "🛞 ATV 10:00 (ready ~9:30)", "🍽️ Booked dining 8:30"],
           events: [
-            { start:"09:30", end:null, grid_mins:30, title:"⏱️ Ready buffer (excursion)", tags:["priority"] },
-            { start:"10:00", end:null, grid_mins:240, title:"🛞 ATV Ride to Jade Caverns (Excursion)", venue:"Cozumel", tags:["priority"] },
-            { start:"19:00", end:"20:00", title:"🎮 Price Is Right – Everyone’s a Contestant", venue:"Royal Theater (D4 Fwd)", tags:["priority"] },
-            { start:"20:30", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["locked"] },
-            { start:"23:00", end:"23:45", title:"🎮 The Crazy Quest (18+)", venue:"Absolute Zero (D6 Aft)", tags:["priority"] }
+            { start:"09:30", end:null, grid_mins:30, title:"⏱️ Ready buffer (excursion)", tags:["priority"], category:"logistics" },
+            { start:"10:00", end:null, grid_mins:240, title:"🛞 ATV Ride to Jade Caverns (Excursion)", venue:"Cozumel", tags:["priority"], category:"excursion" },
+            { start:"19:00", end:"20:00", title:"🎮 Price Is Right – Everyone’s a Contestant", venue:"Royal Theater (D4 Fwd)", tags:["priority"], category:"entertainment" },
+            { start:"20:30", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["locked"], category:"dining" },
+            { start:"23:00", end:"23:45", title:"🎮 The Crazy Quest (18+)", venue:"Absolute Zero (D6 Aft)", tags:["priority"], category:"entertainment" }
           ]
         },
 
         d6: {
           chips: ["🌊 Sea Day", "🍽️ Dining flexible", "💦 Aqua Action booked"],
           events: [
-            { start:"18:30", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["flex"] },
-            { start:"22:30", end:"23:30", title:"💦 AQUA ACTION!", venue:"AquaTheater (D15 Fwd)", tags:["locked"] }
+            { start:"18:30", end:null, grid_mins:75, title:"🍽️ My Time Dining", tags:["flex"], category:"dining" },
+            { start:"22:30", end:"23:30", title:"💦 AQUA ACTION!", venue:"AquaTheater (D15 Fwd)", tags:["locked"], category:"entertainment" }
           ]
         },
 
         d7: {
           chips: ["🏝️ CocoCay (7:00–5:00)", "✨ Starburst 7:15", "🍽️ Dinner after Starburst"],
           events: [
-            { start:"07:00", end:"17:00", title:"🏝️ Perfect Day at CocoCay" },
-            { start:"19:15", end:"20:05", title:"✨ Starburst: Elemental Beauty", venue:"Absolute Zero (D6 Aft)", tags:["locked"] },
-            { start:"20:15", end:null, grid_mins:60, title:"🍽️ Dinner (placeholder after Starburst)", tags:["flex"] },
-            { start:"22:30", end:"23:25", title:"🎤 Adult Comedy (18+)", venue:"Royal Theater (D4 Fwd)" }
+            { start:"07:00", end:"17:00", title:"🏝️ Perfect Day at CocoCay", category:"port" },
+            { start:"19:15", end:"20:05", title:"✨ Starburst: Elemental Beauty", venue:"Absolute Zero (D6 Aft)", tags:["locked"], category:"entertainment" },
+            { start:"20:15", end:null, grid_mins:60, title:"🍽️ Dinner (placeholder after Starburst)", tags:["flex"], category:"dining" },
+            { start:"22:30", end:"23:25", title:"🎤 Adult Comedy (18+)", venue:"Royal Theater (D4 Fwd)", category:"entertainment" }
           ]
         }
       },
-
-      /* Standardized night blocks */
-      gridSlots: [
-        { label:"4:30–6:00",   start:"16:30", end:"18:00" },
-        { label:"6:00–7:30",   start:"18:00", end:"19:30" },
-        { label:"7:30–9:00",   start:"19:30", end:"21:00" },
-        { label:"9:00–10:30",  start:"21:00", end:"22:30" },
-        { label:"10:30–12:00", start:"22:30", end:"24:00" },
-        { label:"12:00–Late",  start:"24:00", end:null }
-      ],
 
       debark: {
         when:"Jan 31 • 6:00 AM",
         text:"🧳 Arrive Miami — plan bags/exit timing accordingly"
       }
+    };
+
+    /*****************************************************************
+     * FILTERS (you can change defaults here)
+     *****************************************************************/
+    const FILTER_STATE = {
+      port: true,
+      excursion: true,
+      entertainment: true,
+      logistics: true,
+      dining: true,        // shows dining in Today + Day cards
+      diningInGrid: false, // KEY: hide dining events in grids (band still shows)
+      showWarnings: true,  // conflict + travel buffer warnings
+      showRiskTags: true   // hide/show the "Risk" bubble itself
     };
 
     /*********************
@@ -470,13 +564,18 @@
 
     function renderTagPills(tags){
       if(!tags || !tags.length) return "";
-      return `<div class="eventtags">${tags.map(t => `<span class="tagpill ${t}">${tagLabel(t)}</span>`).join("")}</div>`;
+      const filtered = tags.filter(t => FILTER_STATE.showRiskTags ? true : (t !== "risk"));
+      if(!filtered.length) return "";
+      return `<div class="eventtags">${filtered.map(t => `<span class="tagpill ${t}">${tagLabel(t)}</span>`).join("")}</div>`;
     }
 
-    function renderEventLine(ev){
+    function renderEventLine(ev, warningsForThisEvent = []){
       const time = fmtRange(ev.start, ev.end);
       const venue = ev.venue ? `<div class="eventmeta small">${ev.venue}</div>` : "";
       const tags = renderTagPills(ev.tags);
+      const warns = (FILTER_STATE.showWarnings && warningsForThisEvent.length)
+        ? `<div class="warn">${warningsForThisEvent.map(w => `<div class="warnline">⚠️ ${w}</div>`).join("")}</div>`
+        : "";
       return `
         <div class="eventline">
           <div class="eventtitle">
@@ -485,21 +584,208 @@
           </div>
           ${venue}
           ${tags}
+          ${warns}
         </div>
       `;
     }
 
-    /* Single-placement by START TIME */
+    function isCategoryVisible(cat){
+      if(cat === "dining") return FILTER_STATE.dining;
+      if(cat === "port") return FILTER_STATE.port;
+      if(cat === "excursion") return FILTER_STATE.excursion;
+      if(cat === "entertainment") return FILTER_STATE.entertainment;
+      if(cat === "logistics") return FILTER_STATE.logistics;
+      return true;
+    }
+
+    function isVisibleInGrid(ev){
+      if(ev.category === "dining" && !FILTER_STATE.diningInGrid) return false;
+      return isCategoryVisible(ev.category);
+    }
+
+    /* Parse deck number from venue text like (D15 ...) or "Deck 4" if present */
+    function parseDeck(venue){
+      if(!venue) return null;
+      const m1 = venue.match(/\(D(\d+)\b/i);
+      if(m1) return Number(m1[1]);
+      const m2 = venue.match(/\bDeck\s*(\d+)\b/i);
+      if(m2) return Number(m2[1]);
+      return null;
+    }
+
+    function estEndMin(ev){
+      const s = toMin(ev.start);
+      if(s == null) return null;
+      const e = toMin(ev.end);
+      if(e != null) return e;
+      const mins = Number(ev.grid_mins ?? 75);
+      return s + mins;
+    }
+
+    /*********************
+     * Conflict + Travel buffer warnings
+     *********************/
+    function computeWarningsForDay(dayId){
+      const events = (CRUISE_DATA.days[dayId]?.events || []).map((ev, idx) => ({...ev, _idx: idx}));
+      // Only warn on visible categories (except: keep warnings about hidden dining if it conflicts with visible entertainment)
+      // We'll compute conflicts across all events, then decide which to display per visible event.
+      const spans = events
+        .map(ev => ({
+          idx: ev._idx,
+          title: ev.title,
+          cat: ev.category,
+          start: toMin(ev.start),
+          end: estEndMin(ev),
+          venue: ev.venue || null
+        }))
+        .filter(s => s.start != null && s.end != null);
+
+      const warningsByIdx = new Map();
+      const addWarn = (i, msg) => {
+        if(!warningsByIdx.has(i)) warningsByIdx.set(i, []);
+        warningsByIdx.get(i).push(msg);
+      };
+
+      // Overlap detection
+      for(let i=0;i<spans.length;i++){
+        for(let j=i+1;j<spans.length;j++){
+          const a = spans[i], b = spans[j];
+          const overlap = Math.min(a.end, b.end) - Math.max(a.start, b.start);
+          if(overlap > 0){
+            addWarn(a.idx, `Overlaps with ${b.title} (${fmtRange(minToHHMM(b.start), minToHHMMCap(b.end))})`);
+            addWarn(b.idx, `Overlaps with ${a.title} (${fmtRange(minToHHMM(a.start), minToHHMMCap(a.end))})`);
+          }
+        }
+      }
+
+      // Travel buffer between consecutive events (same day)
+      const sorted = spans.slice().sort((a,b)=>a.start-b.start);
+      for(let i=0;i<sorted.length-1;i++){
+        const cur = sorted[i], nxt = sorted[i+1];
+        // If there is a time gap and both have venues/decks, check if gap is tight
+        const gap = nxt.start - cur.end;
+        if(gap < 0) continue; // already overlap handled
+        const d1 = parseDeck(cur.venue);
+        const d2 = parseDeck(nxt.venue);
+        if(d1 == null || d2 == null) continue;
+
+        const diff = Math.abs(d2 - d1);
+        const needed = (diff <= 1) ? 5 : (diff <= 4) ? 10 : 15;
+        if(gap < needed){
+          addWarn(nxt.idx, `Tight turn: ~${gap} min gap; suggested ~${needed} min between venues (Deck ${d1} → Deck ${d2}).`);
+        }
+      }
+
+      return warningsByIdx;
+    }
+
+    function minToHHMM(min){
+      const h = Math.floor(min/60);
+      const m = min%60;
+      return `${pad2(h)}:${pad2(m)}`;
+    }
+    function minToHHMMCap(min){
+      // allow beyond 24:00 for estimates but cap display at 24:00+
+      if(min >= 24*60) return "24:00";
+      return minToHHMM(min);
+    }
+
+    /*********************
+     * Dining band + day summary
+     *********************/
+    function getDiningBand(dayId){
+      const evs = (CRUISE_DATA.days[dayId]?.events || []).filter(ev => ev.category==="dining");
+      if(!evs.length) return null;
+      // pick earliest dining start
+      evs.sort((a,b)=>(toMin(a.start)??99999)-(toMin(b.start)??99999));
+      const d = evs[0];
+      const time = fmtRange(d.start, d.end);
+      const status = (d.tags||[]).includes("locked") ? "Booked" : (d.tags||[]).includes("flex") ? "Flexible" : "";
+      const cls = (d.tags||[]).includes("locked") ? "booked" : (d.tags||[]).includes("flex") ? "flex" : "";
+      return { text:`🍽️ Dining: ${time}`, status, cls };
+    }
+
+    function getDaySummaryBadges(dayId){
+      const evs = (CRUISE_DATA.days[dayId]?.events || []);
+      const badges = [];
+
+      // Dining badge (always)
+      const dining = getDiningBand(dayId);
+      if(dining){
+        badges.push({ text: dining.text.replace("🍽️ ","🍽️ "), cls: dining.cls || "flex" });
+      }
+
+      // Excursion badge (first excursion / ready buffer)
+      const ex = evs
+        .filter(e => (e.category==="excursion" || (e.category==="logistics" && /buffer/i.test(e.title))) )
+        .sort((a,b)=>(toMin(a.start)??99999)-(toMin(b.start)??99999))[0];
+      if(ex){
+        badges.push({ text:`🧭 ${fmtTime(ex.start)}`, cls:"" });
+      }
+
+      // Priority entertainment badge (first priority entertainment)
+      const pr = evs
+        .filter(e => e.category==="entertainment" && (e.tags||[]).includes("priority"))
+        .sort((a,b)=>(toMin(a.start)??99999)-(toMin(b.start)??99999))[0];
+      if(pr){
+        badges.push({ text:`⭐ ${fmtTime(pr.start)}`, cls:"priority" });
+      }
+
+      // Late night risk badge (any risk tag)
+      const hasRisk = evs.some(e => (e.tags||[]).includes("risk"));
+      if(hasRisk){
+        badges.push({ text:"⚠️ Risk", cls:"priority" });
+      }
+
+      return badges.slice(0,4);
+    }
+
+    /*********************
+     * Grid placement logic (single-placement by START TIME)
+     *********************/
     function startInSlot(slot, ev){
       const s = toMin(ev.start);
       if(s == null) return false;
-
       const slotStart = toMin(slot.start);
-      const slotEnd = (slot.end == null) ? (24*60 + 120) : toMin(slot.end);
-
+      const slotEnd = (slot.end == null) ? (24*60 + 240) : toMin(slot.end);
       return (s >= slotStart) && (s < slotEnd);
     }
 
+    /*********************
+     * UI: Filters
+     *********************/
+    function renderFilters(){
+      const el = document.getElementById("filters");
+      const items = [
+        { key:"port", label:"Ports" },
+        { key:"excursion", label:"Excursions" },
+        { key:"entertainment", label:"Entertainment" },
+        { key:"logistics", label:"Logistics" },
+        { key:"dining", label:"Dining" },
+        { key:"diningInGrid", label:"Dining in grids", sub:"(recommended OFF)" },
+        { key:"showWarnings", label:"Warnings", sub:"(conflicts + walk time)" },
+        { key:"showRiskTags", label:"Risk bubble" }
+      ];
+
+      el.innerHTML = items.map(it => `
+        <label class="toggle">
+          <input type="checkbox" ${FILTER_STATE[it.key] ? "checked" : ""} data-filter="${it.key}" />
+          <span>${it.label}</span>
+          ${it.sub ? `<small>${it.sub}</small>` : ""}
+        </label>
+      `).join("");
+
+      el.querySelectorAll("input[data-filter]").forEach(inp => {
+        inp.addEventListener("change", () => {
+          FILTER_STATE[inp.dataset.filter] = inp.checked;
+          rerenderAll();
+        });
+      });
+    }
+
+    /*********************
+     * Render: Today
+     *********************/
     function renderToday(){
       const daybar = document.getElementById("daybar");
       const todayPanel = document.getElementById("todayPanel");
@@ -514,24 +800,34 @@
         daybar.appendChild(btn);
 
         const dayObj = CRUISE_DATA.days[d.id];
+        const warningsByIdx = computeWarningsForDay(d.id);
         const chips = (dayObj.chips||[]).map(c => `<span class="chip">${c}</span>`).join("");
-        const events = (dayObj.events||[]).map(ev => `
-          <li class="li">
-            <div class="when">${fmtRange(ev.start, ev.end)}</div>
-            <div class="what">
-              ${ev.title}
-              ${ev.venue ? `<div class="small">${ev.venue}</div>` : ""}
-              ${renderTagPills(ev.tags)}
-            </div>
-          </li>
-        `).join("");
+
+        const eventsVisible = (dayObj.events||[])
+          .filter(ev => isCategoryVisible(ev.category))
+          .map((ev, i) => ({ ev, i }));
+
+        const events = eventsVisible.map(({ev, i}) => {
+          const warns = warningsByIdx.get(i) || [];
+          return `
+            <li class="li">
+              <div class="when">${fmtRange(ev.start, ev.end)}</div>
+              <div class="what">
+                ${ev.title}
+                ${ev.venue ? `<div class="small">${ev.venue}</div>` : ""}
+                ${renderTagPills(ev.tags)}
+                ${(FILTER_STATE.showWarnings && warns.length) ? `<div class="warn">${warns.map(w => `<div class="warnline">⚠️ ${w}</div>`).join("")}</div>` : ""}
+              </div>
+            </li>
+          `;
+        }).join("");
 
         const panel = document.createElement("div");
         panel.className = "daypanel" + (idx===0 ? " active" : "");
         panel.id = d.id;
         panel.innerHTML = `
           <div class="kv">${chips}</div>
-          <ul class="list">${events || `<li class="li"><div class="what muted">No events listed.</div></li>`}</ul>
+          <ul class="list">${events || `<li class="li"><div class="what muted">Nothing showing with current filters.</div></li>`}</ul>
         `;
         todayPanel.appendChild(panel);
       });
@@ -546,13 +842,17 @@
       buttons.forEach(b => b.addEventListener("click", () => setDay(b.dataset.day)));
     }
 
+    /*********************
+     * Render: At-a-glance (respects filters)
+     *********************/
     function renderGlance(){
       const top = document.getElementById("glanceTop");
       const bottom = document.getElementById("glanceBottom");
 
-      const makeList = (items, mode="dayText") => {
+      const makeList = (items, mode="dayText", catKey=null) => {
+        const filtered = catKey ? items.filter(()=>FILTER_STATE[catKey]) : items;
         if(mode==="dayText"){
-          return `<ul class="list">${items.map(it => `
+          return `<ul class="list">${filtered.map(it => `
             <li class="li">
               <div class="when">${it.day}</div>
               <div class="what">
@@ -562,7 +862,7 @@
             </li>
           `).join("")}</ul>`;
         }
-        return `<ul class="list">${items.map(it => `
+        return `<ul class="list">${filtered.map(it => `
           <li class="li">
             <div class="when">${it.label}</div>
             <div class="what">
@@ -576,51 +876,91 @@
       top.innerHTML = `
         <div class="card">
           <h3>🎭 Entertainment</h3>
-          ${makeList(CRUISE_DATA.glance.entertainment, "dayText")}
+          ${FILTER_STATE.entertainment ? makeList(CRUISE_DATA.glance.entertainment, "dayText") : `<div class="muted">Hidden by filter.</div>`}
         </div>
         <div class="card">
           <h3>🏝️ Ports & Excursions</h3>
-          ${makeList(CRUISE_DATA.glance.ports, "dayText")}
+          ${(FILTER_STATE.port || FILTER_STATE.excursion) ? makeList(CRUISE_DATA.glance.ports, "dayText") : `<div class="muted">Hidden by filter.</div>`}
         </div>
       `;
 
       bottom.innerHTML = `
         <div class="card">
           <h3>🍽️ Dining</h3>
-          ${makeList(CRUISE_DATA.glance.dining, "dayText")}
+          ${FILTER_STATE.dining ? makeList(CRUISE_DATA.glance.dining, "dayText") : `<div class="muted">Hidden by filter.</div>`}
         </div>
         <div class="card">
           <h3>⚠️ Risk & Energy</h3>
-          ${makeList(CRUISE_DATA.glance.risk, "labelText")}
+          ${(FILTER_STATE.showWarnings || FILTER_STATE.showRiskTags) ? makeList(CRUISE_DATA.glance.risk, "labelText") : `<div class="muted">Hidden by filter.</div>`}
         </div>
         <div class="card" style="grid-column: 1 / -1;">
           <h3>🧭 Logistics</h3>
-          ${makeList(CRUISE_DATA.glance.logistics, "labelText")}
+          ${FILTER_STATE.logistics ? makeList(CRUISE_DATA.glance.logistics, "labelText") : `<div class="muted">Hidden by filter.</div>`}
         </div>
       `;
     }
 
-    function renderGrid(){
-      const wrap = document.getElementById("gridTable");
+    /*********************
+     * Render: Grid (morning + evening)
+     *********************/
+    function renderGrid(targetId, slots){
+      const wrap = document.getElementById(targetId);
       const days = CRUISE_DATA.meta.days;
 
       const thead = `
         <thead>
           <tr>
             <th>Time Block</th>
-            ${days.map(d => `<th>${d.label}<div class="small">${d.title}</div></th>`).join("")}
+            ${days.map(d => {
+              const summary = getDaySummaryBadges(d.id);
+              const dining = getDiningBand(d.id);
+              const band = dining ? `
+                <div class="band">
+                  <span>${dining.text}</span>
+                  <span class="mini ${dining.cls || ""}">${dining.status || (dining.cls==="flex" ? "Flexible" : "")}</span>
+                </div>
+              ` : ``;
+
+              return `
+                <th>
+                  <div class="colhead-title">${d.label}</div>
+                  <div class="colhead-sub">${d.title}</div>
+                  <div class="colhead-summary">
+                    ${summary.map(s => `<span class="mini ${s.cls||""}">${s.text}</span>`).join("")}
+                  </div>
+                  ${band}
+                </th>
+              `;
+            }).join("")}
           </tr>
         </thead>
       `;
 
-      const rows = CRUISE_DATA.gridSlots.map(slot => {
+      // Precompute warnings for grid display
+      const warningsByDay = {};
+      days.forEach(d => warningsByDay[d.id] = computeWarningsForDay(d.id));
+
+      const rows = slots.map(slot => {
         const tds = days.map(d => {
-          const events = (CRUISE_DATA.days[d.id]?.events || [])
+          const all = (CRUISE_DATA.days[d.id]?.events || []);
+          const events = all
+            .filter(ev => isVisibleInGrid(ev))
             .filter(ev => startInSlot(slot, ev))
             .sort((a,b) => (toMin(a.start) ?? 0) - (toMin(b.start) ?? 0));
 
           if(!events.length) return `<td class="cell-muted">—</td>`;
-          return `<td>${events.map(renderEventLine).join("")}</td>`;
+
+          // warnings: map original index
+          const dayEvents = CRUISE_DATA.days[d.id].events;
+          const wmap = warningsByDay[d.id];
+
+          return `<td>${
+            events.map(ev => {
+              const idx = dayEvents.indexOf(ev); // same object ref
+              const warns = (idx >= 0) ? (wmap.get(idx) || []) : [];
+              return renderEventLine(ev, warns);
+            }).join("")
+          }</td>`;
         }).join("");
 
         return `<tr><td>${slot.label}</td>${tds}</tr>`;
@@ -629,27 +969,40 @@
       wrap.innerHTML = `<table aria-label="Visual schedule grid">${thead}<tbody>${rows}</tbody></table>`;
     }
 
+    /*********************
+     * Render: Full day-by-day cards
+     *********************/
     function renderAllDays(){
       const el = document.getElementById("allDays");
       const dayCards = CRUISE_DATA.meta.days.map(d => {
         const dayObj = CRUISE_DATA.days[d.id];
+        const warningsByIdx = computeWarningsForDay(d.id);
         const chips = (dayObj.chips||[]).map(c => `<span class="chip">${c}</span>`).join("");
-        const events = (dayObj.events||[]).map(ev => `
-          <li class="li">
-            <div class="when">${fmtRange(ev.start, ev.end)}</div>
-            <div class="what">
-              ${ev.title}
-              ${ev.venue ? `<div class="small">${ev.venue}</div>` : ""}
-              ${renderTagPills(ev.tags)}
-            </div>
-          </li>
-        `).join("");
+
+        const eventsVisible = (dayObj.events||[])
+          .filter(ev => isCategoryVisible(ev.category))
+          .map((ev, i) => ({ ev, i }));
+
+        const events = eventsVisible.map(({ev, i}) => {
+          const warns = warningsByIdx.get(i) || [];
+          return `
+            <li class="li">
+              <div class="when">${fmtRange(ev.start, ev.end)}</div>
+              <div class="what">
+                ${ev.title}
+                ${ev.venue ? `<div class="small">${ev.venue}</div>` : ""}
+                ${renderTagPills(ev.tags)}
+                ${(FILTER_STATE.showWarnings && warns.length) ? `<div class="warn">${warns.map(w => `<div class="warnline">⚠️ ${w}</div>`).join("")}</div>` : ""}
+              </div>
+            </li>
+          `;
+        }).join("");
 
         return `
           <div class="card">
             <h3>${d.label} – ${d.title}</h3>
             <div class="kv">${chips}</div>
-            <ul class="list">${events || `<li class="li"><div class="what muted">No events listed.</div></li>`}</ul>
+            <ul class="list">${events || `<li class="li"><div class="what muted">Nothing showing with current filters.</div></li>`}</ul>
           </div>
         `;
       }).join("");
@@ -669,12 +1022,18 @@
       el.innerHTML = dayCards + debark;
     }
 
-    function boot(){
-      document.getElementById("subtitle").textContent = CRUISE_DATA.meta.subtitle || "";
+    function rerenderAll(){
+      renderFilters();
       renderToday();
       renderGlance();
-      renderGrid();
+      renderGrid("gridTableMorning", CRUISE_DATA.gridSlotsMorning);
+      renderGrid("gridTableEvening", CRUISE_DATA.gridSlotsEvening);
       renderAllDays();
+    }
+
+    function boot(){
+      document.getElementById("subtitle").textContent = CRUISE_DATA.meta.subtitle || "";
+      rerenderAll();
     }
     boot();
   </script>
